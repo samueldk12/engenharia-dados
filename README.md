@@ -13,6 +13,37 @@ Este é um guia completo e aprofundado para se tornar um **Engenheiro de Dados S
 - **Garantir** qualidade, governança e segurança de dados
 - **Preparar-se** para entrevistas de nível sênior nas melhores empresas
 
+## 🚀 CLI de Estudos
+
+Este repositório inclui uma **CLI completa** para gerenciar seus estudos, projetos e certificações!
+
+```bash
+# Instalar dependências
+pip install -r requirements.txt
+
+# Ver comandos disponíveis
+python study-cli.py --help
+
+# Exemplos rápidos
+python study-cli.py projects list              # Listar projetos
+python study-cli.py projects start netflix-clone  # Iniciar projeto
+python study-cli.py certs list                 # Ver certificações
+python study-cli.py progress show              # Ver seu progresso
+python study-cli.py test run netflix-clone     # Executar testes
+python study-cli.py benchmark run log-processing  # Benchmarks
+```
+
+📖 **[Documentação completa da CLI](./README-CLI.md)**
+
+**Principais funcionalidades:**
+- ✅ Gerenciar projetos práticos e de entrevista
+- ✅ Tracking de progresso de estudos
+- ✅ Gerenciar certificações e tópicos
+- ✅ Executar testes automatizados
+- ✅ Rodar benchmarks de performance
+- ✅ Export/import de progresso
+- ✅ Interface colorida e intuitiva
+
 ## 📚 Estrutura do Programa
 
 ### 🔰 Módulo 1: Fundamentos de Engenharia de Dados
