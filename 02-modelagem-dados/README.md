@@ -1,704 +1,148 @@
-# =ƒ MÛdulo 2: Modelagem e Armazenamento de Dados
+# üóÑÔ∏è M√≥dulo 2: Modelagem e Armazenamento de Dados
 
-## =À Vis„o Geral
+**Dura√ß√£o:** 4-5 semanas | **N√≠vel:** Intermedi√°rio
 
-Este mÛdulo cobre tÈcnicas avanÁadas de modelagem de dados, desde modelagem dimensional cl·ssica atÈ arquiteturas modernas de Data Lakes e Lakehouses.
+## üìã Vis√£o Geral
 
-**DuraÁ„o:** 4-5 semanas | **NÌvel:** Intermedi·rio
+Aprenda a modelar, armazenar e organizar dados para an√°lises eficientes em grande escala.
 
----
+## üéØ Objetivos
 
-## <Ø Objetivos de Aprendizado
+- ‚úÖ Modelagem dimensional (Star, Snowflake)
+- ‚úÖ Data Vault 2.0
+- ‚úÖ Data Warehouses modernos
+- ‚úÖ Data Lakes e Lakehouses
+- ‚úÖ Formatos de arquivo otimizados
+- ‚úÖ Particionamento e indexa√ß√£o
 
--  Dominar modelagem dimensional (Star Schema, Snowflake)
--  Implementar Data Vault 2.0
--  Projetar Data Warehouses escal·veis
--  Arquitetar Data Lakes e Lakehouses
--  Escolher formatos de arquivo otimizados
--  Implementar estratÈgias de particionamento
-
----
-
-## =⁄ Conte˙do
+## üìö Conte√∫do
 
 ### 1. Modelagem Dimensional
 
-#### 1.1 Star Schema
-
-**Conceito:** Modelo desnormalizado com tabela fato central e dimensıes.
-
-```sql
--- TABELA FATO: Eventos/TransaÁıes (muitas linhas, narrow)
-CREATE TABLE fact_sales (
-    sale_id BIGINT PRIMARY KEY,
-    date_key INT NOT NULL,
-    product_key INT NOT NULL,
-    customer_key INT NOT NULL,
-    store_key INT NOT NULL,
-    quantity INT,
-    unit_price DECIMAL(10,2),
-    total_amount DECIMAL(12,2),
-    discount_amount DECIMAL(10,2),
-    tax_amount DECIMAL(10,2),
-    FOREIGN KEY (date_key) REFERENCES dim_date(date_key),
-    FOREIGN KEY (product_key) REFERENCES dim_product(product_key),
-    FOREIGN KEY (customer_key) REFERENCES dim_customer(customer_key),
-    FOREIGN KEY (store_key) REFERENCES dim_store(store_key)
-);
-
--- DIMENS’ES: Contexto (poucas linhas, wide)
-CREATE TABLE dim_product (
-    product_key INT PRIMARY KEY,
-    product_id VARCHAR(50),  -- Business key
-    product_name VARCHAR(200),
-    category VARCHAR(100),
-    subcategory VARCHAR(100),
-    brand VARCHAR(100),
-    unit_cost DECIMAL(10,2),
-    supplier_name VARCHAR(200)
-);
-
-CREATE TABLE dim_customer (
-    customer_key INT PRIMARY KEY,
-    customer_id VARCHAR(50),
-    customer_name VARCHAR(200),
-    email VARCHAR(200),
-    customer_tier VARCHAR(20),
-    country VARCHAR(50),
-    city VARCHAR(100),
-    signup_date DATE
-);
-
-CREATE TABLE dim_date (
-    date_key INT PRIMARY KEY,
-    full_date DATE,
-    day_of_week VARCHAR(10),
-    day_of_month INT,
-    day_of_year INT,
-    week_of_year INT,
-    month_number INT,
-    month_name VARCHAR(10),
-    quarter INT,
-    year INT,
-    is_weekend BOOLEAN,
-    is_holiday BOOLEAN
-);
-
-CREATE TABLE dim_store (
-    store_key INT PRIMARY KEY,
-    store_id VARCHAR(50),
-    store_name VARCHAR(200),
-    store_type VARCHAR(50),
-    country VARCHAR(50),
-    state VARCHAR(50),
-    city VARCHAR(100),
-    manager_name VARCHAR(200)
-);
+**Star Schema:**
+```
+      DIM_PRODUTO
+           |
+DIM_DATA - FACT_VENDAS - DIM_CLIENTE
+           |
+      DIM_LOJA
 ```
 
-**Vantagens:**
-- Queries simples e r·pidas
-- F·cil de entender para analistas
-- ”tima performance para BI tools
+- Fact Tables (m√©tricas, FK's)
+- Dimension Tables (contexto, SK's)
+- Slowly Changing Dimensions (SCD Type 1, 2, 3)
+- Surrogate Keys vs Natural Keys
 
-**Desvantagens:**
-- Redund‚ncia de dados nas dimensıes
-- Dificuldade com mudanÁas de hierarquias
-
-#### 1.2 Snowflake Schema
-
-**Conceito:** Normaliza as dimensıes em sub-dimensıes.
-
-```sql
--- Dimens„o normalizada
-CREATE TABLE dim_product (
-    product_key INT PRIMARY KEY,
-    product_id VARCHAR(50),
-    product_name VARCHAR(200),
-    category_key INT,  -- FK para dim_category
-    brand_key INT,     -- FK para dim_brand
-    supplier_key INT   -- FK para dim_supplier
-);
-
-CREATE TABLE dim_category (
-    category_key INT PRIMARY KEY,
-    category_name VARCHAR(100),
-    subcategory VARCHAR(100),
-    department VARCHAR(100)
-);
-
-CREATE TABLE dim_brand (
-    brand_key INT PRIMARY KEY,
-    brand_name VARCHAR(100),
-    brand_country VARCHAR(50)
-);
-```
-
-**Quando usar:**
-- Dimensıes muito grandes
-- Necessidade de reduzir duplicaÁ„o
-- Hierarquias complexas
-
-#### 1.3 Slowly Changing Dimensions (SCD)
-
-**Tipo 1: Sobrescrever**
-```sql
--- Simplesmente atualiza o registro
-UPDATE dim_customer
-SET customer_tier = 'gold', city = 'New York'
-WHERE customer_key = 123;
-```
-
-**Tipo 2: Adicionar nova linha (MAIS COMUM)**
-```sql
--- MantÈm histÛrico com versıes
-CREATE TABLE dim_customer_scd2 (
-    customer_key INT PRIMARY KEY,
-    customer_id VARCHAR(50),
-    customer_name VARCHAR(200),
-    customer_tier VARCHAR(20),
-    city VARCHAR(100),
-    effective_date DATE,
-    expiration_date DATE,
-    is_current BOOLEAN,
-    version INT
-);
-
--- Inserir nova vers„o
-INSERT INTO dim_customer_scd2
-SELECT
-    NEXTVAL('customer_key_seq'),
-    customer_id,
-    customer_name,
-    'gold' as customer_tier,  -- Novo valor
-    'New York' as city,
-    CURRENT_DATE as effective_date,
-    '9999-12-31' as expiration_date,
-    TRUE as is_current,
-    version + 1
-FROM dim_customer_scd2
-WHERE customer_id = 'C123' AND is_current = TRUE;
-
--- Expirar vers„o antiga
-UPDATE dim_customer_scd2
-SET expiration_date = CURRENT_DATE - 1,
-    is_current = FALSE
-WHERE customer_id = 'C123' AND version = (
-    SELECT MAX(version) - 1 FROM dim_customer_scd2 WHERE customer_id = 'C123'
-);
-```
-
-**Tipo 3: Adicionar coluna**
-```sql
--- MantÈm valor anterior em coluna separada
-ALTER TABLE dim_customer
-ADD COLUMN previous_tier VARCHAR(20),
-ADD COLUMN tier_change_date DATE;
-```
-
----
+**Snowflake Schema:**
+- Dimens√µes normalizadas
+- Menos redund√¢ncia
+- Mais joins necess√°rios
 
 ### 2. Data Vault 2.0
 
-**Conceito:** Metodologia de modelagem para Enterprise DW, focada em auditoria e rastreabilidade.
+**Componentes:**
+- **Hubs**: Entidades de neg√≥cio (Cliente, Produto)
+- **Links**: Relacionamentos (Pedido)
+- **Satellites**: Atributos descritivos
 
-#### Componentes:
+**Vantagens:**
+- Audit√°vel (hist√≥rico completo)
+- Escal√°vel (paraleliza√ß√£o)
+- Flex√≠vel (adicionar fontes)
 
-**1. Hubs (Entidades de negÛcio)**
-```sql
-CREATE TABLE hub_customer (
-    hub_customer_key CHAR(32) PRIMARY KEY,  -- Hash MD5
-    customer_id VARCHAR(50) UNIQUE,  -- Business key
-    load_date TIMESTAMP,
-    record_source VARCHAR(100)
-);
+### 3. Data Warehouses
 
-CREATE TABLE hub_product (
-    hub_product_key CHAR(32) PRIMARY KEY,
-    product_id VARCHAR(50) UNIQUE,
-    load_date TIMESTAMP,
-    record_source VARCHAR(100)
-);
+**Snowflake:**
+- Separa√ß√£o compute/storage
+- Auto-scaling
+- Zero-copy cloning
+- Time Travel
+
+**AWS Redshift:**
+- Columnar storage
+- MPP architecture
+- Distribution styles (KEY, ALL, EVEN)
+- Sort keys
+
+**Google BigQuery:**
+- Serverless
+- SQL ANSI
+- Streaming ingestion
+- Partitioning/Clustering
+
+### 4. Data Lakes
+
+**Arquitetura:**
+```
+Bronze (Raw) ‚Üí Silver (Cleaned) ‚Üí Gold (Curated)
 ```
 
-**2. Links (Relacionamentos)**
-```sql
-CREATE TABLE link_order (
-    link_order_key CHAR(32) PRIMARY KEY,  -- Hash de todas as chaves
-    hub_customer_key CHAR(32),
-    hub_product_key CHAR(32),
-    hub_store_key CHAR(32),
-    order_id VARCHAR(50),
-    load_date TIMESTAMP,
-    record_source VARCHAR(100),
-    FOREIGN KEY (hub_customer_key) REFERENCES hub_customer(hub_customer_key),
-    FOREIGN KEY (hub_product_key) REFERENCES hub_product(hub_product_key)
-);
-```
-
-**3. Satellites (Atributos e contexto)**
-```sql
-CREATE TABLE sat_customer (
-    hub_customer_key CHAR(32),
-    load_date TIMESTAMP,
-    customer_name VARCHAR(200),
-    email VARCHAR(200),
-    customer_tier VARCHAR(20),
-    city VARCHAR(100),
-    hash_diff CHAR(32),  -- Hash dos atributos para detectar mudanÁas
-    record_source VARCHAR(100),
-    PRIMARY KEY (hub_customer_key, load_date),
-    FOREIGN KEY (hub_customer_key) REFERENCES hub_customer(hub_customer_key)
-);
-
-CREATE TABLE sat_order (
-    link_order_key CHAR(32),
-    load_date TIMESTAMP,
-    order_date DATE,
-    quantity INT,
-    unit_price DECIMAL(10,2),
-    total_amount DECIMAL(12,2),
-    hash_diff CHAR(32),
-    record_source VARCHAR(100),
-    PRIMARY KEY (link_order_key, load_date)
-);
-```
-
-**Vantagens do Data Vault:**
-- Audit·vel: Rastreia origem de cada dado
-- Escal·vel: F·cil adicionar novas fontes
-- HistÛrico completo: Todas as mudanÁas preservadas
-- Paraleliz·vel: Cargas independentes
-
-**Desvantagens:**
-- Complexidade: Muitas tabelas
-- Performance: Queries podem ser complexas
-- Requer camada de apresentaÁ„o (marts)
-
----
-
-### 3. Data Warehouses Modernos
-
-#### 3.1 Snowflake
-
-```sql
--- Criar database e schema
-CREATE DATABASE analytics_dw;
-CREATE SCHEMA sales_mart;
-
--- Criar tabela com clustering
-CREATE TABLE sales_mart.fact_sales (
-    sale_id BIGINT,
-    sale_date DATE,
-    product_id INT,
-    customer_id INT,
-    amount DECIMAL(10,2)
-)
-CLUSTER BY (sale_date, customer_id);
-
--- Time Travel (acesso a dados histÛricos)
-SELECT * FROM fact_sales
-AT (TIMESTAMP => '2024-01-01 00:00:00');
-
-SELECT * FROM fact_sales
-BEFORE (STATEMENT => '01a4c8f5-0000-0000-0000-000000000000');
-
--- Zero-copy cloning
-CREATE TABLE fact_sales_dev CLONE fact_sales;
-
--- Materialized views
-CREATE MATERIALIZED VIEW mv_daily_sales AS
-SELECT
-    sale_date,
-    product_id,
-    SUM(amount) as total_amount,
-    COUNT(*) as transaction_count
-FROM fact_sales
-GROUP BY sale_date, product_id;
-```
-
-#### 3.2 BigQuery (Google Cloud)
-
-```sql
--- Tabelas particionadas por data
-CREATE TABLE `project.dataset.sales`
-PARTITION BY DATE(sale_date)
-CLUSTER BY customer_id, product_id
-AS SELECT * FROM source_table;
-
--- Particionamento por range de inteiros
-CREATE TABLE `project.dataset.events`
-PARTITION BY RANGE_BUCKET(user_id, GENERATE_ARRAY(0, 100000, 1000))
-AS SELECT * FROM source_events;
-
--- Tabelas externas (query direto no GCS)
-CREATE EXTERNAL TABLE `project.dataset.external_sales`
-OPTIONS (
-  format = 'PARQUET',
-  uris = ['gs://bucket/path/*.parquet']
-);
-
--- BI Engine para cache
-ALTER TABLE `project.dataset.sales`
-SET OPTIONS (
-  max_staleness = INTERVAL 1 HOUR
-);
-```
-
-#### 3.3 Redshift (AWS)
-
-```sql
--- Distribution styles
-CREATE TABLE fact_sales (
-    sale_id BIGINT,
-    customer_id INT,
-    product_id INT,
-    amount DECIMAL(10,2)
-)
-DISTKEY(customer_id)  -- Co-locate por customer_id
-SORTKEY(sale_date);   -- Ordenar por data
-
--- Distribution styles:
--- KEY: Distribui por hash de uma coluna
--- ALL: CÛpia completa em cada nÛ (dimensıes pequenas)
--- EVEN: Round-robin (padr„o)
-
--- Sort keys
--- Compound: Ordem importa (WHERE date AND customer)
--- Interleaved: Ordem n„o importa (filtros variados)
-
-CREATE TABLE dim_customer (
-    customer_id INT,
-    customer_name VARCHAR(200),
-    country VARCHAR(50)
-)
-DISTSTYLE ALL  -- Tabela pequena, replicar em todos os nÛs
-SORTKEY(customer_id);
-
--- Vacuum e Analyze
-VACUUM FULL fact_sales;
-ANALYZE fact_sales;
-```
-
----
-
-### 4. Data Lakes e Lakehouses
-
-#### 4.1 Arquitetura de Data Lake
-
-**Camadas:**
-```
-Raw/Bronze Layer:
-  - Dados brutos, imut·veis
-  - Formato original
-  - Particionado por data de ingest„o
-
-Processed/Silver Layer:
-  - Dados limpos e validados
-  - Formato otimizado (Parquet)
-  - Particionado por business keys
-
-Curated/Gold Layer:
-  - Dados agregados
-  - Modelagem dimensional
-  - Otimizado para consumo
-```
-
-**Estrutura de diretÛrios:**
-```
-s3://data-lake/
-   raw/
-      source=salesforce/
-         table=accounts/
-            year=2024/
-               month=01/
-                  day=01/
-                     data.json.gz
-      source=postgresql/
-          table=orders/
-              snapshot=2024-01-01/
-                  data.parquet
-   processed/
-      domain=sales/
-         entity=customers/
-            year=2024/month=01/
-               part-00000.parquet
-   curated/
-       mart=sales/
-           fact_sales/
-              year=2024/quarter=Q1/
-                 data.parquet
-           dim_customer/
-               snapshot=2024-01-01/
-                   data.parquet
-```
-
-#### 4.2 Delta Lake
-
-**Conceito:** Adiciona ACID transactions e time travel ao Data Lake
-
-```python
-from pyspark.sql import SparkSession
-from delta import *
-
-# Configurar Spark com Delta
-spark = SparkSession.builder \
-    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-    .getOrCreate()
-
-# Escrever Delta table
-df = spark.read.parquet("s3://bucket/raw/sales/")
-df.write.format("delta") \
-    .mode("overwrite") \
-    .partitionBy("year", "month") \
-    .save("s3://bucket/delta/sales/")
-
-# ACID updates
-from delta.tables import DeltaTable
-
-delta_table = DeltaTable.forPath(spark, "s3://bucket/delta/sales/")
-
-# UPSERT (merge)
-delta_table.alias("target") \
-    .merge(
-        updates.alias("source"),
-        "target.sale_id = source.sale_id"
-    ) \
-    .whenMatchedUpdate(set={
-        "amount": "source.amount",
-        "updated_at": "current_timestamp()"
-    }) \
-    .whenNotMatchedInsert(values={
-        "sale_id": "source.sale_id",
-        "amount": "source.amount",
-        "created_at": "current_timestamp()"
-    }) \
-    .execute()
-
-# DELETE
-delta_table.delete("sale_date < '2023-01-01'")
-
-# Time Travel
-df_v1 = spark.read.format("delta") \
-    .option("versionAsOf", 0) \
-    .load("s3://bucket/delta/sales/")
-
-df_yesterday = spark.read.format("delta") \
-    .option("timestampAsOf", "2024-01-01") \
-    .load("s3://bucket/delta/sales/")
-
-# Ver histÛrico
-delta_table.history().show()
-
-# Optimize (compaction)
-delta_table.optimize().executeCompaction()
-
-# Z-ordering (multi-dimensional clustering)
-delta_table.optimize().executeZOrderBy("customer_id", "product_id")
-
-# Vacuum (limpar old files)
-delta_table.vacuum(168)  # 7 dias
-```
-
-#### 4.3 Apache Iceberg
-
-```python
-from pyspark.sql import SparkSession
-
-spark = SparkSession.builder \
-    .config("spark.sql.catalog.my_catalog", "org.apache.iceberg.spark.SparkCatalog") \
-    .config("spark.sql.catalog.my_catalog.type", "hive") \
-    .getOrCreate()
-
-# Criar tabela Iceberg
-spark.sql("""
-    CREATE TABLE my_catalog.db.sales (
-        sale_id BIGINT,
-        customer_id INT,
-        sale_date DATE,
-        amount DECIMAL(10,2)
-    )
-    USING iceberg
-    PARTITIONED BY (days(sale_date))
-""")
-
-# Schema evolution
-spark.sql("ALTER TABLE my_catalog.db.sales ADD COLUMN discount DECIMAL(10,2)")
-
-# Time travel
-spark.sql("""
-    SELECT * FROM my_catalog.db.sales
-    VERSION AS OF 'snapshot-id-here'
-""")
-
-# Hidden partitioning (n„o precisa especificar nas queries)
-spark.sql("SELECT * FROM my_catalog.db.sales WHERE sale_date = '2024-01-01'")
-# Automaticamente usa a partiÁ„o!
-```
-
----
+**Governan√ßa:**
+- Data Catalog (Glue, Purview)
+- Data Lineage
+- Access control (IAM, RBAC)
+- Data Quality
 
 ### 5. Formatos de Arquivo
 
-#### 5.1 ComparaÁ„o
+| Formato | Tipo | Compress√£o | Uso |
+|---------|------|------------|-----|
+| **Parquet** | Columnar | Snappy | Analytics, Spark |
+| **ORC** | Columnar | Zlib | Hive, Presto |
+| **Avro** | Row | Deflate | Streaming, Kafka |
+| **Delta Lake** | Lakehouse | Snappy | ACID, Time Travel |
+| **Iceberg** | Lakehouse | Various | Schema evolution |
 
-| Formato | Tipo | Compress„o | Schema | Splittable | Uso |
-|---------|------|------------|--------|------------|-----|
-| CSV | Text | Sim | N„o | Sim | Simples, legÌvel |
-| JSON | Text | Sim | Parcial | N„o | APIs, semi-estruturado |
-| Avro | Bin·rio | Sim | Sim | Sim | Streaming, schema evolution |
-| Parquet | Bin·rio | Sim | Sim | Sim | Analytics, columnar |
-| ORC | Bin·rio | Sim | Sim | Sim | Hive, columnar |
+### 6. Otimiza√ß√µes
 
-#### 5.2 Parquet (RECOMENDADO para analytics)
-
-**Vantagens:**
-- Columnar: LÍ apenas colunas necess·rias
-- Compress„o eficiente: 5-10x menor que CSV
-- Predicate pushdown: Filtra antes de ler
-- Schema embutido
-- Suporte a tipos complexos (arrays, structs, maps)
-
+**Particionamento:**
 ```python
-import pandas as pd
+# By date
+/data/year=2024/month=01/day=15/data.parquet
 
-# Ler Parquet
-df = pd.read_parquet(
-    's3://bucket/data.parquet',
-    columns=['col1', 'col2'],  # LÍ apenas colunas necess·rias
-    filters=[('year', '=', 2024), ('month', '=', 1)]  # Predicate pushdown
-)
+# By category
+/data/category=electronics/data.parquet
 
-# Escrever Parquet
-df.to_parquet(
-    's3://bucket/output.parquet',
-    engine='pyarrow',
-    compression='snappy',  # snappy: r·pido, gzip: menor, zstd: balanceado
-    index=False,
-    partition_cols=['year', 'month']
-)
-
-# PySpark
-spark.read.parquet("s3://bucket/data.parquet") \
-    .select("col1", "col2") \
-    .filter("year = 2024") \
-    .write.parquet("s3://bucket/output.parquet", mode="overwrite")
+# Multi-level
+/data/year=2024/month=01/category=books/data.parquet
 ```
 
----
-
-### 6. EstratÈgias de Particionamento
-
-#### 6.1 Particionamento por Data (MAIS COMUM)
-
-```python
-# Spark
-df.write.partitionBy("year", "month", "day") \
-    .parquet("s3://bucket/data/")
-
-# Estrutura resultante:
-# s3://bucket/data/
-#   year=2024/
-#     month=01/
-#       day=01/
-#         part-00000.parquet
-#       day=02/
-#         part-00000.parquet
-
-# Query otimizada
-spark.read.parquet("s3://bucket/data/") \
-    .filter("year = 2024 AND month = 1")  # LÍ apenas partiÁıes necess·rias
+**Bucketing:**
+```sql
+CREATE TABLE sales
+USING parquet
+PARTITIONED BY (year, month)
+CLUSTERED BY (customer_id) INTO 100 BUCKETS;
 ```
 
-#### 6.2 Bucketing (Hashing)
+## üéØ Exerc√≠cios
 
-```python
-# Distribuir dados uniformemente
-df.write.bucketBy(100, "customer_id") \
-    .sortBy("sale_date") \
-    .saveAsTable("sales_bucketed")
+### Exerc√≠cio 1: Star Schema
+Modelar DW para e-commerce:
+- Fatos: Vendas, Devolu√ß√µes
+- Dimens√µes: Cliente, Produto, Tempo, Loja
 
-# BenefÌcio: JOINs mais r·pidos
-sales.join(customers, "customer_id")  # Evita shuffle se ambas bucketed
-```
+### Exerc√≠cio 2: SCD Type 2
+Implementar hist√≥rico de mudan√ßas em dimens√µes
 
-#### 6.3 Hive Partitioning
+### Exerc√≠cio 3: Data Lake
+Criar pipeline Bronze‚ÜíSilver‚ÜíGold com valida√ß√µes
 
-```python
-# Adiciona partiÁıes dinamicamente
-spark.sql("""
-    INSERT OVERWRITE TABLE sales
-    PARTITION (year, month)
-    SELECT *, YEAR(sale_date), MONTH(sale_date)
-    FROM raw_sales
-""")
-```
+## üìñ Recursos
 
----
+- **Livro**: "The Data Warehouse Toolkit" (Kimball)
+- **Curso**: Snowflake Hands-on Essentials
+- **Docs**: Delta Lake Documentation
 
-## =ª ExercÌcios Pr·ticos
+## ‚úÖ Checklist
 
-### ExercÌcio 1: Modelar Star Schema para E-commerce
-Crie modelo dimensional completo com:
-- Fato de vendas
-- Dimensıes de produto, cliente, tempo, loja
-- Implemente SCD Type 2 para clientes
+- [ ] Criei Star Schema completo
+- [ ] Implementei Data Vault
+- [ ] Usei Snowflake/Redshift/BigQuery
+- [ ] Organizei Data Lake em camadas
+- [ ] Otimizei com particionamento
+- [ ] Escolho formato certo para cada caso
 
-=¡ [exercicios/ex01-star-schema.sql](./exercicios/ex01-star-schema.sql)
+## üöÄ Pr√≥ximos Passos
 
-### ExercÌcio 2: Implementar Data Vault
-Converta modelo relacional em Data Vault:
-- Criar hubs, links e satellites
-- Implementar carga incremental
-- Query com JOINs complexos
-
-=¡ [exercicios/ex02-data-vault/](./exercicios/ex02-data-vault/)
-
-### ExercÌcio 3: Data Lake com Delta Lake
-Construa pipeline de Data Lake:
-- Bronze: ingest„o raw
-- Silver: limpeza e validaÁ„o
-- Gold: agregaÁıes e marts
-- Implementar UPSERT e time travel
-
-=¡ [exercicios/ex03-delta-lake/](./exercicios/ex03-delta-lake/)
-
----
-
-## <Ø Projeto Pr·tico: Modern Data Warehouse
-
-**Objetivo:** Construir um Data Warehouse completo end-to-end
-
-**Requisitos:**
-1. Modelagem dimensional (star schema)
-2. ETL com Spark
-3. SCD Type 2 para dimensıes
-4. Particionamento otimizado
-5. Formato Parquet
-6. Queries analÌticas complexas
-
-=¡ [projeto/modern-data-warehouse/](./projeto/modern-data-warehouse/)
-
----
-
-##  Checklist de Conclus„o
-
-- [ ] Modelar star schema completo
-- [ ] Implementar SCD Type 2
-- [ ] Trabalhar com Data Vault 2.0
-- [ ] Criar Data Lake com 3 camadas
-- [ ] Usar Delta Lake ou Iceberg
-- [ ] Otimizar com Parquet e particionamento
-- [ ] Completar projeto do DW
-
----
-
-## = PrÛximos Passos
-
-**MÛdulo 3:** Processamento de Dados em Larga Escala
-- Apache Spark profundo
-- OtimizaÁıes avanÁadas
-- Distributed computing
-
-[Ver MÛdulo 3](../03-processamento-larga-escala/README.md)
+‚û°Ô∏è **[M√≥dulo 3: Processamento em Larga Escala](../03-processamento-larga-escala/)**
