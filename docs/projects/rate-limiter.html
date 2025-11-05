@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Rate Limiter - Projeto Prático</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="../index.html#projects">Projetos</a></li>
+                <li><a href="https://github.com/samueldk12/engenharia-dados">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="project-detail">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Início</a>
+                <span>/</span>
+                <a href="../index.html#projects">Projetos</a>
+                <span>/</span>
+                <span>Distributed Rate Limiter</span>
+            </div>
+
+            <div class="project-header">
+                <div class="project-badge interview">Interview Project</div>
+                <h1>🚦 Distributed Rate Limiter</h1>
+                <p class="project-subtitle">
+                    Rate limiter distribuído de alta performance para APIs com 1M+ requisições/minuto
+                </p>
+                <div class="project-meta">
+                    <span><i class="fas fa-star"></i> Dificuldade: 5/5</span>
+                    <span><i class="fas fa-clock"></i> 90 minutos</span>
+                    <span><i class="fas fa-users"></i> Interview Project</span>
+                </div>
+            </div>
+
+            <div class="project-content">
+                <section>
+                    <h2>🎯 Problema</h2>
+                    <p>
+                        Construa um rate limiter distribuído que suporte <strong>1 milhão de requisições por minuto</strong> 
+                        com as seguintes características:
+                    </p>
+                    <ul>
+                        <li><strong>Múltiplas estratégias:</strong> Token Bucket, Leaky Bucket, Fixed Window, Sliding Window</li>
+                        <li><strong>Distribuído:</strong> Funciona em múltiplos servidores sem race conditions</li>
+                        <li><strong>Multi-tenant:</strong> Limites diferentes por usuário/API key</li>
+                        <li><strong>Granularidade:</strong> Limites por segundo, minuto, hora, dia</li>
+                        <li><strong>Performance:</strong> Latência < 5ms (p99)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🏗️ Arquitetura</h2>
+                    <div class="architecture-diagram">
+                        <pre><code>
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│   Client    │────▶│  API Gateway │────▶│   Service    │
+│  Request    │     │ (Rate Limit) │     │   Backend    │
+└─────────────┘     └──────┬───────┘     └──────────────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │    Redis     │
+                    │   Cluster    │ ◀──── Lua Scripts
+                    └──────────────┘
+
+Rate Limit Rules:
+- user:123      → 100 req/min
+- api_key:abc   → 1000 req/min  
+- ip:1.2.3.4    → 10 req/sec
+        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>🔧 Estratégias de Rate Limiting</h2>
+                    <div class="component-grid">
+                        <div class="component-card">
+                            <h3><i class="fas fa-coins"></i> Token Bucket</h3>
+                            <ul>
+                                <li>Tokens reabastecidos constantemente</li>
+                                <li>Permite bursts controlados</li>
+                                <li>Mais flexível para tráfego irregular</li>
+                                <li><strong>Use case:</strong> APIs públicas</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Redis</span>
+                                <span class="tech-tag">Lua</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-tint"></i> Leaky Bucket</h3>
+                            <ul>
+                                <li>Processa requests em taxa constante</li>
+                                <li>Suaviza tráfego irregular</li>
+                                <li>Fila de requests com overflow</li>
+                                <li><strong>Use case:</strong> Processamento batch</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Queue</span>
+                                <span class="tech-tag">Workers</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-window-maximize"></i> Fixed Window</h3>
+                            <ul>
+                                <li>Contador resetado em intervalos fixos</li>
+                                <li>Simples de implementar</li>
+                                <li>Vulnerável a bursts no limite</li>
+                                <li><strong>Use case:</strong> Rate limits simples</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Redis INCR</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-sliders-h"></i> Sliding Window Log</h3>
+                            <ul>
+                                <li>Janela deslizante precisa</li>
+                                <li>Sem bursts nos limites</li>
+                                <li>Mais complexo e memory-intensive</li>
+                                <li><strong>Use case:</strong> Alta precisão</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Redis ZSET</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💻 Implementação</h2>
+                    
+                    <h3>1. Token Bucket (Redis + Lua)</h3>
+                    <pre><code class="language-lua">
+-- token_bucket.lua
+local key = KEYS[1]
+local capacity = tonumber(ARGV[1])
+local refill_rate = tonumber(ARGV[2])  -- tokens per second
+local requested = tonumber(ARGV[3])
+local now = tonumber(ARGV[4])
+
+-- Get current bucket state
+local bucket = redis.call('HMGET', key, 'tokens', 'last_refill')
+local tokens = tonumber(bucket[1]) or capacity
+local last_refill = tonumber(bucket[2]) or now
+
+-- Refill tokens based on elapsed time
+local elapsed = now - last_refill
+local tokens_to_add = elapsed * refill_rate
+tokens = math.min(capacity, tokens + tokens_to_add)
+
+-- Check if request can be fulfilled
+if tokens >= requested then
+    tokens = tokens - requested
+    redis.call('HMSET', key, 'tokens', tokens, 'last_refill', now)
+    redis.call('EXPIRE', key, 60)  -- TTL 60 seconds
+    return {1, tokens}  -- [allowed, remaining_tokens]
+else
+    return {0, tokens}  -- [denied, remaining_tokens]
+end
+                    </code></pre>
+
+                    <h3>2. Python Client Implementation</h3>
+                    <pre><code class="language-python">
+import redis
+import time
+from typing import Tuple
+
+class DistributedRateLimiter:
+    def __init__(self, redis_client: redis.Redis):
+        self.redis = redis_client
+        
+        # Load Lua scripts
+        with open('token_bucket.lua', 'r') as f:
+            self.token_bucket_script = self.redis.register_script(f.read())
+    
+    def check_rate_limit(
+        self, 
+        key: str, 
+        capacity: int, 
+        refill_rate: float,
+        tokens_requested: int = 1
+    ) -> Tuple[bool, int]:
+        """
+        Check if request is within rate limit.
+        
+        Args:
+            key: Identifier (user_id, api_key, ip)
+            capacity: Maximum tokens in bucket
+            refill_rate: Tokens added per second
+            tokens_requested: Tokens to consume (default: 1)
+            
+        Returns:
+            (allowed, remaining_tokens)
+        """
+        now = time.time()
+        result = self.token_bucket_script(
+            keys=[f"ratelimit:{key}"],
+            args=[capacity, refill_rate, tokens_requested, now]
+        )
+        
+        allowed = bool(result[0])
+        remaining = int(result[1])
+        
+        return allowed, remaining
+    
+    def sliding_window_counter(
+        self, 
+        key: str, 
+        limit: int, 
+        window_seconds: int
+    ) -> bool:
+        """Sliding window using Redis sorted set."""
+        now = time.time()
+        window_start = now - window_seconds
+        
+        pipe = self.redis.pipeline()
+        
+        # Remove old entries
+        pipe.zremrangebyscore(f"ratelimit:{key}", 0, window_start)
+        
+        # Count current entries
+        pipe.zcard(f"ratelimit:{key}")
+        
+        # Add current request
+        pipe.zadd(f"ratelimit:{key}", {str(now): now})
+        
+        # Set expiration
+        pipe.expire(f"ratelimit:{key}", window_seconds)
+        
+        results = pipe.execute()
+        current_count = results[1]
+        
+        return current_count < limit
+
+# Usage Example
+redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
+limiter = DistributedRateLimiter(redis_client)
+
+# Check rate limit for user
+user_id = "user_12345"
+allowed, remaining = limiter.check_rate_limit(
+    key=user_id,
+    capacity=100,      # 100 requests max
+    refill_rate=1.67   # ~100 requests per minute (100/60)
+)
+
+if allowed:
+    print(f"✅ Request allowed. {remaining} tokens remaining")
+else:
+    print(f"❌ Rate limit exceeded. Try again later")
+                    </code></pre>
+
+                    <h3>3. FastAPI Middleware</h3>
+                    <pre><code class="language-python">
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
+import time
+
+app = FastAPI()
+limiter = DistributedRateLimiter(redis_client)
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    # Extract identifier (API key, user ID, or IP)
+    api_key = request.headers.get("X-API-Key")
+    client_ip = request.client.host
+    
+    identifier = api_key if api_key else f"ip:{client_ip}"
+    
+    # Define limits based on tier
+    if api_key:
+        capacity, refill_rate = get_tier_limits(api_key)
+    else:
+        capacity, refill_rate = 10, 0.17  # 10 req/min for anonymous
+    
+    # Check rate limit
+    allowed, remaining = limiter.check_rate_limit(
+        key=identifier,
+        capacity=capacity,
+        refill_rate=refill_rate
+    )
+    
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": "Rate limit exceeded",
+                "retry_after": int(1 / refill_rate)  # seconds
+            },
+            headers={
+                "X-RateLimit-Limit": str(capacity),
+                "X-RateLimit-Remaining": "0",
+                "Retry-After": str(int(1 / refill_rate))
+            }
+        )
+    
+    # Add rate limit headers
+    response = await call_next(request)
+    response.headers["X-RateLimit-Limit"] = str(capacity)
+    response.headers["X-RateLimit-Remaining"] = str(remaining)
+    
+    return response
+
+def get_tier_limits(api_key: str) -> Tuple[int, float]:
+    """Get rate limit based on subscription tier."""
+    tiers = {
+        "free": (100, 1.67),      # 100 req/min
+        "pro": (1000, 16.67),     # 1000 req/min
+        "enterprise": (10000, 166.67)  # 10000 req/min
+    }
+    tier = get_user_tier(api_key)  # Query from database
+    return tiers.get(tier, tiers["free"])
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>📊 Métricas</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">1M+</div>
+                            <div class="metric-label">Req/minuto</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt;5ms</div>
+                            <div class="metric-label">Latência P99</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">99.99%</div>
+                            <div class="metric-label">Precisão</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">100K</div>
+                            <div class="metric-label">Users/API Keys</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>⚠️ Desafios e Soluções</h2>
+                    <div class="challenges">
+                        <div class="challenge-item">
+                            <h4>⚡ Performance (< 5ms)</h4>
+                            <p><strong>Solução:</strong> Lua scripts atômicos no Redis evitam múltiplos round-trips</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🔄 Race Conditions</h4>
+                            <p><strong>Solução:</strong> Lua scripts garantem atomicidade, sem race conditions entre instâncias</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>💾 Memory Efficiency</h4>
+                            <p><strong>Solução:</strong> TTL em keys, Sliding Window Log apenas para casos críticos</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🌐 Distribuído</h4>
+                            <p><strong>Solução:</strong> Redis Cluster para sharding, sem single point of failure</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>📊 Observabilidade</h4>
+                            <p><strong>Solução:</strong> Métricas exportadas para Prometheus (rate_limit_rejected, p99_latency)</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💡 Lições Aprendidas</h2>
+                    <ul>
+                        <li><strong>Lua Scripts:</strong> Essenciais para atomicidade e performance. Evitam múltiplos comandos Redis.</li>
+                        <li><strong>Token Bucket > Fixed Window:</strong> Token bucket mais flexível para bursts legítimos.</li>
+                        <li><strong>Redis Pipeline:</strong> Para operações não-atômicas, pipeline reduz latência em 50%.</li>
+                        <li><strong>Granularidade:</strong> Combine limites (1000/min + 10/sec) para melhor proteção.</li>
+                        <li><strong>Headers:</strong> Sempre retorne X-RateLimit-* headers para transparência.</li>
+                        <li><strong>429 Response:</strong> Inclua Retry-After header para clientes respeitarem backoff.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🧪 Testes</h2>
+                    <pre><code class="language-python">
+import pytest
+import time
+
+def test_token_bucket_basic():
+    limiter = DistributedRateLimiter(redis_client)
+    key = "test_user_1"
+    
+    # Allow first 10 requests
+    for i in range(10):
+        allowed, _ = limiter.check_rate_limit(key, capacity=10, refill_rate=1)
+        assert allowed, f"Request {i+1} should be allowed"
+    
+    # 11th request should be denied
+    allowed, _ = limiter.check_rate_limit(key, capacity=10, refill_rate=1)
+    assert not allowed, "11th request should be denied"
+    
+    # Wait for refill and try again
+    time.sleep(2)  # 2 tokens refilled
+    allowed, remaining = limiter.check_rate_limit(key, capacity=10, refill_rate=1)
+    assert allowed, "Request should be allowed after refill"
+    assert remaining >= 1
+
+def test_sliding_window():
+    limiter = DistributedRateLimiter(redis_client)
+    key = "test_user_2"
+    
+    # Send 5 requests (limit: 5/10 seconds)
+    for _ in range(5):
+        assert limiter.sliding_window_counter(key, limit=5, window_seconds=10)
+    
+    # 6th request should fail
+    assert not limiter.sliding_window_counter(key, limit=5, window_seconds=10)
+    
+    # Wait for window to slide
+    time.sleep(11)
+    assert limiter.sliding_window_counter(key, limit=5, window_seconds=10)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>🎯 Próximos Passos</h2>
+                    <ul>
+                        <li>Implementar rate limiting geográfico (limites por região)</li>
+                        <li>Adicionar quotas diárias/mensais além de rate limits</li>
+                        <li>Dashboard para monitoramento em tempo real</li>
+                        <li>Circuit breaker para proteger Redis de sobrecarga</li>
+                    </ul>
+                </section>
+
+                <div class="navigation-buttons">
+                    <a href="./log-processing.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </a>
+                    <a href="./ride-sharing.html" class="btn btn-primary">
+                        Próximo Projeto <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+        </div>
+    </footer>
+
+    <style>
+        .project-detail {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+        }
+
+        .project-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .project-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .project-badge.interview {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .project-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            color: var(--text-light);
+        }
+
+        .project-content section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .architecture-diagram {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .architecture-diagram pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .component-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .component-card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .challenges {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .challenge-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .challenge-item h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        pre code {
+            display: block;
+            padding: 1.5rem;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .project-header h1 {
+                font-size: 2rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

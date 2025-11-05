@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Databricks Data Engineer - Certification Guide</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="../index.html#certifications">Certificações</a></li>
+                <li><a href="https://github.com/samueldk12/engenharia-dados">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="cert-detail">
+        <div class="container">
+            <div class="cert-header">
+                <div class="cert-provider databricks">Databricks</div>
+                <h1>Databricks Certified Data Engineer Associate</h1>
+                <div class="cert-meta">
+                    <span><i class="fas fa-dollar-sign"></i> $200 USD</span>
+                    <span><i class="fas fa-clock"></i> 90 minutos</span>
+                    <span><i class="fas fa-question-circle"></i> 45 questões</span>
+                    <span><i class="fas fa-chart-line"></i> ROI: +$15-25K/ano</span>
+                </div>
+            </div>
+
+            <div class="cert-content">
+                <section>
+                    <h2>📋 Visão Geral</h2>
+                    <p>
+                        A certificação Databricks Data Engineer Associate valida expertise em construção 
+                        de pipelines de dados robustos usando Databricks Lakehouse Platform.
+                    </p>
+                    <p><strong>Nível:</strong> Associate (Intermediário)</p>
+                    <p><strong>Validade:</strong> 2 anos</p>
+                    <p><strong>Score mínimo:</strong> 70%</p>
+                    <p><strong>Formato:</strong> Multiple choice + Multiple select</p>
+                </section>
+
+                <section>
+                    <h2>📚 Domínios do Exame</h2>
+                    <div class="domains-grid">
+                        <div class="domain-card">
+                            <div class="domain-header">
+                                <h3>1. Databricks Lakehouse (24%)</h3>
+                            </div>
+                            <ul>
+                                <li>Lakehouse Architecture</li>
+                                <li>Delta Lake fundamentals</li>
+                                <li>ACID transactions</li>
+                                <li>Time Travel</li>
+                                <li>Optimization (OPTIMIZE, Z-ORDER)</li>
+                            </ul>
+                        </div>
+
+                        <div class="domain-card">
+                            <div class="domain-header">
+                                <h3>2. ELT with Spark SQL (29%)</h3>
+                            </div>
+                            <ul>
+                                <li>SELECT, WHERE, JOIN</li>
+                                <li>Aggregations e Window Functions</li>
+                                <li>CREATE TABLE (Managed vs External)</li>
+                                <li>INSERT, UPDATE, DELETE, MERGE</li>
+                                <li>Views (Temp, Global, Persistent)</li>
+                            </ul>
+                        </div>
+
+                        <div class="domain-card">
+                            <div class="domain-header">
+                                <h3>3. Incremental Processing (20%)</h3>
+                            </div>
+                            <ul>
+                                <li>Structured Streaming</li>
+                                <li>Auto Loader (cloudFiles)</li>
+                                <li>MERGE for upserts</li>
+                                <li>Watermarks</li>
+                                <li>Triggers (Once, Available Now)</li>
+                            </ul>
+                        </div>
+
+                        <div class="domain-card">
+                            <div class="domain-header">
+                                <h3>4. Workflows (16%)</h3>
+                            </div>
+                            <ul>
+                                <li>Databricks Workflows (Jobs)</li>
+                                <li>Task orchestration</li>
+                                <li>Task dependencies</li>
+                                <li>Scheduling</li>
+                                <li>Error handling</li>
+                            </ul>
+                        </div>
+
+                        <div class="domain-card">
+                            <div class="domain-header">
+                                <h3>5. Governance (11%)</h3>
+                            </div>
+                            <ul>
+                                <li>Unity Catalog</li>
+                                <li>Metastore hierarchy</li>
+                                <li>GRANT/REVOKE permissions</li>
+                                <li>Data lineage</li>
+                                <li>Data quality checks</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>📖 Plano de Estudos (6 semanas)</h2>
+                    
+                    <div class="study-plan">
+                        <div class="week">
+                            <h3>Semana 1-2: Delta Lake & Spark SQL</h3>
+                            <ul>
+                                <li>Delta Lake deep dive (ACID, Time Travel, CDF)</li>
+                                <li>Table optimization (OPTIMIZE, ZORDER, VACUUM)</li>
+                                <li>Spark SQL basics to advanced</li>
+                                <li>Window functions e CTEs</li>
+                                <li><strong>Labs:</strong> Create Bronze/Silver/Gold layers</li>
+                            </ul>
+                        </div>
+
+                        <div class="week">
+                            <h3>Semana 3-4: Incremental Processing</h3>
+                            <ul>
+                                <li>Structured Streaming fundamentals</li>
+                                <li>Auto Loader para ingestão incremental</li>
+                                <li>MERGE INTO para upserts</li>
+                                <li>Change Data Feed (CDF)</li>
+                                <li><strong>Labs:</strong> Build streaming pipeline</li>
+                            </ul>
+                        </div>
+
+                        <div class="week">
+                            <h3>Semana 5: Workflows & Orchestration</h3>
+                            <ul>
+                                <li>Databricks Jobs e Tasks</li>
+                                <li>Task dependencies (DAG)</li>
+                                <li>Scheduling strategies</li>
+                                <li>Error handling e retry logic</li>
+                                <li><strong>Labs:</strong> Create multi-task workflow</li>
+                            </ul>
+                        </div>
+
+                        <div class="week">
+                            <h3>Semana 6: Unity Catalog & Review</h3>
+                            <ul>
+                                <li>Unity Catalog architecture</li>
+                                <li>Permissions (GRANT/REVOKE)</li>
+                                <li>Data lineage e discovery</li>
+                                <li>Practice exams (2+)</li>
+                                <li><strong>Review:</strong> Todos os domínios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💡 Dicas para o Exame</h2>
+                    <ul>
+                        <li><strong>Delta Lake:</strong> Conheça bem OPTIMIZE, ZORDER, VACUUM e quando usar cada um</li>
+                        <li><strong>MERGE INTO:</strong> Sintaxe completa é cobrada - saiba MATCHED e NOT MATCHED</li>
+                        <li><strong>Auto Loader:</strong> Entenda diferenças entre cloudFiles e readStream normal</li>
+                        <li><strong>Managed vs External:</strong> Saiba diferenças e quando usar cada tipo de tabela</li>
+                        <li><strong>Views:</strong> Temp view vs Global temp view vs Persistent view</li>
+                        <li><strong>Unity Catalog:</strong> Hierarquia: Metastore → Catalog → Schema → Table</li>
+                        <li><strong>Hands-on:</strong> 80% do exame requer experiência prática - faça muitos labs!</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>💻 Exemplos de Código</h2>
+                    
+                    <h3>1. Delta Lake Optimization</h3>
+                    <pre><code class="language-sql">
+-- Optimize table and Z-ORDER by frequently filtered columns
+OPTIMIZE customers
+ZORDER BY (country, city);
+
+-- Vacuum old files (removes files older than retention period)
+VACUUM customers RETAIN 168 HOURS;  -- 7 days
+
+-- Time Travel
+SELECT * FROM customers VERSION AS OF 5;
+SELECT * FROM customers TIMESTAMP AS OF '2024-01-01';
+
+-- Describe history
+DESCRIBE HISTORY customers;
+                    </code></pre>
+
+                    <h3>2. Auto Loader (Incremental Ingestion)</h3>
+                    <pre><code class="language-python">
+# Auto Loader with schema inference and evolution
+df = (spark.readStream
+    .format("cloudFiles")
+    .option("cloudFiles.format", "json")
+    .option("cloudFiles.schemaLocation", "/schema/customers")
+    .option("cloudFiles.inferColumnTypes", "true")
+    .option("cloudFiles.schemaEvolutionMode", "addNewColumns")
+    .load("/data/raw/customers/")
+)
+
+# Write to Delta table
+(df.writeStream
+    .format("delta")
+    .option("checkpointLocation", "/checkpoint/customers")
+    .outputMode("append")
+    .trigger(availableNow=True)  # Process all available data then stop
+    .table("bronze.customers")
+)
+                    </code></pre>
+
+                    <h3>3. MERGE INTO (Upserts)</h3>
+                    <pre><code class="language-sql">
+MERGE INTO customers AS target
+USING updates AS source
+ON target.customer_id = source.customer_id
+WHEN MATCHED THEN
+    UPDATE SET
+        target.email = source.email,
+        target.updated_at = current_timestamp()
+WHEN NOT MATCHED THEN
+    INSERT (customer_id, email, created_at, updated_at)
+    VALUES (source.customer_id, source.email, current_timestamp(), current_timestamp())
+WHEN NOT MATCHED BY SOURCE THEN
+    DELETE;  -- Optional: delete records that no longer exist in source
+                    </code></pre>
+
+                    <h3>4. Structured Streaming</h3>
+                    <pre><code class="language-python">
+from pyspark.sql.functions import *
+
+# Read from Delta table as stream
+stream_df = spark.readStream.table("bronze.events")
+
+# Aggregation with watermark
+aggregated = (stream_df
+    .withWatermark("timestamp", "10 minutes")
+    .groupBy(
+        window(col("timestamp"), "5 minutes"),
+        col("user_id")
+    )
+    .agg(
+        count("*").alias("event_count"),
+        approx_count_distinct("session_id").alias("unique_sessions")
+    )
+)
+
+# Write stream
+(aggregated.writeStream
+    .format("delta")
+    .outputMode("append")
+    .option("checkpointLocation", "/checkpoint/agg")
+    .trigger(processingTime="1 minute")
+    .table("silver.user_metrics")
+)
+                    </code></pre>
+
+                    <h3>5. Unity Catalog Permissions</h3>
+                    <pre><code class="language-sql">
+-- Grant permissions
+GRANT SELECT ON TABLE main.sales.orders TO `data-analysts`;
+GRANT MODIFY ON SCHEMA main.sales TO `data-engineers`;
+GRANT CREATE TABLE ON CATALOG main TO `data-engineers`;
+
+-- Revoke permissions
+REVOKE SELECT ON TABLE main.sales.orders FROM `data-analysts`;
+
+-- Show permissions
+SHOW GRANTS ON TABLE main.sales.orders;
+
+-- Create catalog and schema
+CREATE CATALOG IF NOT EXISTS production;
+CREATE SCHEMA IF NOT EXISTS production.sales;
+
+-- Create managed table (data managed by Databricks)
+CREATE TABLE production.sales.orders (
+    order_id BIGINT,
+    customer_id BIGINT,
+    total_amount DECIMAL(10,2),
+    order_date DATE
+) USING DELTA;
+
+-- Create external table (data in your own location)
+CREATE TABLE production.sales.orders_external
+LOCATION 's3://my-bucket/orders/'
+AS SELECT * FROM source_table;
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>📚 Recursos</h2>
+                    <div class="resources-grid">
+                        <div class="resource-card">
+                            <h3>Cursos</h3>
+                            <ul>
+                                <li>Databricks Academy (oficial - GRATUITO)</li>
+                                <li>Udemy - Bryan Cafferky</li>
+                                <li>Coursera - Databricks Specialization</li>
+                            </ul>
+                        </div>
+
+                        <div class="resource-card">
+                            <h3>Practice Exams</h3>
+                            <ul>
+                                <li>Databricks Official Sample Questions</li>
+                                <li>Udemy Practice Tests</li>
+                                <li>ExamTopics (community questions)</li>
+                            </ul>
+                        </div>
+
+                        <div class="resource-card">
+                            <h3>Documentação</h3>
+                            <ul>
+                                <li>Delta Lake Documentation</li>
+                                <li>Databricks Documentation</li>
+                                <li>Unity Catalog Guide</li>
+                            </ul>
+                        </div>
+
+                        <div class="resource-card">
+                            <h3>Hands-on</h3>
+                            <ul>
+                                <li>Databricks Community Edition (FREE)</li>
+                                <li>Practice notebooks no GitHub</li>
+                                <li>Build end-to-end pipeline</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>⚠️ Pegadinhas Comuns</h2>
+                    <ul>
+                        <li><strong>VACUUM:</strong> Retenção padrão é 7 dias (168 horas), não 30 dias</li>
+                        <li><strong>ZORDER:</strong> Não funciona com partition columns - só com data columns</li>
+                        <li><strong>Views:</strong> Temp views só existem na sessão atual, global temp views em db `global_temp`</li>
+                        <li><strong>Streaming Joins:</strong> Nem todos os tipos de join são suportados em streaming</li>
+                        <li><strong>outputMode:</strong> "complete" só funciona com aggregations, não com raw data</li>
+                        <li><strong>MERGE:</strong> Target table DEVE ser Delta, source pode ser qualquer formato</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🎯 Checklist Final</h2>
+                    <ul>
+                        <li>✅ Sei criar e otimizar tabelas Delta (OPTIMIZE, ZORDER, VACUUM)</li>
+                        <li>✅ Domino Spark SQL (JOINs, window functions, CTEs)</li>
+                        <li>✅ Sei usar Auto Loader para ingestão incremental</li>
+                        <li>✅ Conheço MERGE INTO para upserts complexos</li>
+                        <li>✅ Entendo diferenças entre managed e external tables</li>
+                        <li>✅ Sei criar e gerenciar Databricks Jobs</li>
+                        <li>✅ Conheço Unity Catalog e permissions</li>
+                        <li>✅ Fiz pelo menos 10 labs práticos</li>
+                        <li>✅ Completei 2+ practice exams com 80%+ score</li>
+                    </ul>
+                </section>
+
+                <div class="navigation-buttons">
+                    <a href="../index.html#certifications" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <a href="https://www.databricks.com/learn/certification/data-engineer-associate" class="btn btn-primary" target="_blank">
+                        Agendar Exame <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+        </div>
+    </footer>
+
+    <style>
+        .cert-detail {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .cert-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .cert-provider.databricks {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #ff3621 0%, #ff6b4a 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .cert-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .cert-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            color: var(--text-light);
+        }
+
+        .cert-content section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .domain-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .domain-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+        }
+
+        .domain-header h3 {
+            margin: 0;
+        }
+
+        .domain-card ul {
+            padding: 1rem;
+            margin: 0;
+        }
+
+        .study-plan {
+            margin-top: 2rem;
+        }
+
+        .week {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .week h3 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .resource-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .resource-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        pre code {
+            display: block;
+            padding: 1.5rem;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .cert-header h1 {
+                font-size: 2rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

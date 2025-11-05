@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Processing System - Projeto Prático</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="../index.html#projects">Projetos</a></li>
+                <li><a href="https://github.com/samueldk12/engenharia-dados">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="project-detail">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Início</a>
+                <span>/</span>
+                <a href="../index.html#projects">Projetos</a>
+                <span>/</span>
+                <span>Log Processing System</span>
+            </div>
+
+            <div class="project-header">
+                <div class="project-badge interview">Interview Project</div>
+                <h1>🔍 Distributed Log Processing System</h1>
+                <p class="project-subtitle">
+                    Sistema de processamento de logs em tempo real para análise de falhas e métricas
+                </p>
+                <div class="project-meta">
+                    <span><i class="fas fa-star"></i> Dificuldade: 4/5</span>
+                    <span><i class="fas fa-clock"></i> 90 minutos</span>
+                    <span><i class="fas fa-users"></i> Interview Project</span>
+                </div>
+            </div>
+
+            <div class="project-content">
+                <section>
+                    <h2>🎯 Problema</h2>
+                    <p>
+                        Você precisa construir um sistema que processa <strong>100 milhões de logs por dia</strong> 
+                        de múltiplos serviços distribuídos. O sistema deve:
+                    </p>
+                    <ul>
+                        <li>Ingerir logs de múltiplas fontes (APIs, microserviços, databases)</li>
+                        <li>Parsear e normalizar diferentes formatos de log</li>
+                        <li>Detectar anomalias e erros em tempo real</li>
+                        <li>Armazenar para análise histórica (hot + cold storage)</li>
+                        <li>Fornecer busca rápida (full-text search) em logs recentes</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🏗️ Arquitetura</h2>
+                    <div class="architecture-diagram">
+                        <pre><code>
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Services   │────▶│    Kafka     │────▶│   Spark      │
+│  (Logs)     │     │  (Buffer)    │     │  Streaming   │
+└─────────────┘     └──────────────┘     └──────┬───────┘
+                                                 │
+                    ┌────────────────────────────┼────────────┐
+                    ▼                            ▼            ▼
+            ┌──────────────┐           ┌──────────────┐  ┌─────────┐
+            │ ElasticSearch│           │  S3 (Cold)   │  │ Alerts  │
+            │  (Hot Data)  │           │  (Archive)   │  │ (SNS)   │
+            └──────────────┘           └──────────────┘  └─────────┘
+        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>🔧 Componentes</h2>
+                    <div class="component-grid">
+                        <div class="component-card">
+                            <h3><i class="fas fa-inbox"></i> Log Ingestion</h3>
+                            <ul>
+                                <li>Kafka como buffer distribuído</li>
+                                <li>Múltiplos tópicos por tipo de log</li>
+                                <li>Particionamento por service_id</li>
+                                <li>Retenção: 7 dias</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Kafka</span>
+                                <span class="tech-tag">Filebeat</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-stream"></i> Stream Processing</h3>
+                            <ul>
+                                <li>Spark Structured Streaming</li>
+                                <li>Parsing de múltiplos formatos</li>
+                                <li>Agregações em janelas de tempo</li>
+                                <li>Detecção de anomalias (ML)</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Spark</span>
+                                <span class="tech-tag">Python</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-search"></i> Search & Query</h3>
+                            <ul>
+                                <li>ElasticSearch para busca rápida</li>
+                                <li>Índices por dia (hot data: 30 dias)</li>
+                                <li>Full-text search com <100ms</li>
+                                <li>Kibana para visualização</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Elasticsearch</span>
+                                <span class="tech-tag">Kibana</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-archive"></i> Cold Storage</h3>
+                            <ul>
+                                <li>S3 para armazenamento histórico</li>
+                                <li>Parquet format (compressão 10x)</li>
+                                <li>Particionamento por ano/mês/dia</li>
+                                <li>Athena para queries ad-hoc</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">S3</span>
+                                <span class="tech-tag">Athena</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💻 Implementação</h2>
+                    
+                    <h3>1. Log Schema Definition</h3>
+                    <pre><code class="language-python">
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType, IntegerType
+
+log_schema = StructType([
+    StructField("timestamp", TimestampType(), False),
+    StructField("service_name", StringType(), False),
+    StructField("level", StringType(), False),  # INFO, WARN, ERROR, FATAL
+    StructField("message", StringType(), False),
+    StructField("trace_id", StringType(), True),
+    StructField("user_id", StringType(), True),
+    StructField("request_id", StringType(), True),
+    StructField("status_code", IntegerType(), True),
+    StructField("latency_ms", IntegerType(), True),
+    StructField("metadata", StringType(), True)  # JSON field
+])
+                    </code></pre>
+
+                    <h3>2. Spark Streaming Job</h3>
+                    <pre><code class="language-python">
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+
+spark = SparkSession.builder \
+    .appName("LogProcessing") \
+    .getOrCreate()
+
+# Read from Kafka
+logs_df = spark \
+    .readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "application-logs") \
+    .load()
+
+# Parse JSON logs
+parsed_logs = logs_df \
+    .select(from_json(col("value").cast("string"), log_schema).alias("log")) \
+    .select("log.*")
+
+# Detect errors with high frequency (anomaly detection)
+error_alerts = parsed_logs \
+    .filter(col("level").isin(["ERROR", "FATAL"])) \
+    .withWatermark("timestamp", "10 minutes") \
+    .groupBy(
+        window(col("timestamp"), "5 minutes"),
+        col("service_name")
+    ) \
+    .agg(
+        count("*").alias("error_count"),
+        collect_list("message").alias("error_messages")
+    ) \
+    .filter(col("error_count") > 100)  # Alert if > 100 errors in 5 min
+
+# Write to ElasticSearch (hot data)
+parsed_logs.writeStream \
+    .format("org.elasticsearch.spark.sql") \
+    .option("es.resource", "logs-{timestamp|yyyy.MM.dd}") \
+    .option("checkpointLocation", "/tmp/checkpoint/elasticsearch") \
+    .start()
+
+# Write to S3 (cold storage)
+parsed_logs.writeStream \
+    .format("parquet") \
+    .option("path", "s3://logs-archive/year={year}/month={month}/day={day}") \
+    .option("checkpointLocation", "/tmp/checkpoint/s3") \
+    .partitionBy("year", "month", "day") \
+    .trigger(processingTime="5 minutes") \
+    .start()
+
+# Send alerts
+error_alerts.writeStream \
+    .foreach(send_alert_to_sns) \
+    .start()
+
+spark.streams.awaitAnyTermination()
+                    </code></pre>
+
+                    <h3>3. ElasticSearch Query Example</h3>
+                    <pre><code class="language-python">
+from elasticsearch import Elasticsearch
+
+es = Elasticsearch(['localhost:9200'])
+
+# Search for errors in last 1 hour
+query = {
+    "query": {
+        "bool": {
+            "must": [
+                {"match": {"level": "ERROR"}},
+                {"range": {"timestamp": {"gte": "now-1h"}}}
+            ]
+        }
+    },
+    "aggs": {
+        "errors_by_service": {
+            "terms": {"field": "service_name.keyword", "size": 10}
+        }
+    },
+    "size": 1000
+}
+
+result = es.search(index="logs-*", body=query)
+print(f"Total errors: {result['hits']['total']['value']}")
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>📊 Métricas</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">100M+</div>
+                            <div class="metric-label">Logs/dia</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt;500ms</div>
+                            <div class="metric-label">Latência E2E</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">30 dias</div>
+                            <div class="metric-label">Hot Storage</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">99.9%</div>
+                            <div class="metric-label">Disponibilidade</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>⚠️ Desafios e Soluções</h2>
+                    <div class="challenges">
+                        <div class="challenge-item">
+                            <h4>📈 Escala (100M logs/dia)</h4>
+                            <p><strong>Solução:</strong> Kafka para buffer, Spark com paralelismo, ElasticSearch sharding</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>💾 Armazenamento</h4>
+                            <p><strong>Solução:</strong> Hot/Cold architecture - ElasticSearch (30 dias) + S3 Parquet (histórico)</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🔍 Busca Rápida</h4>
+                            <p><strong>Solução:</strong> ElasticSearch com índices diários, ILM policy para rotação</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🚨 Alertas em Tempo Real</h4>
+                            <p><strong>Solução:</strong> Spark Streaming com janelas de tempo + SNS para notificações</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💡 Lições Aprendidas</h2>
+                    <ul>
+                        <li><strong>Kafka Partitioning:</strong> Particionar por service_id garante processamento ordenado por serviço</li>
+                        <li><strong>ElasticSearch ILM:</strong> Index Lifecycle Management essencial para gerenciar hot/warm/cold data</li>
+                        <li><strong>Parquet Compression:</strong> Reduz armazenamento em 10x comparado com JSON</li>
+                        <li><strong>Watermarks:</strong> Spark watermarks críticos para lidar com late-arriving data</li>
+                        <li><strong>Monitoring:</strong> Monitorar lag do Kafka é essencial para detectar bottlenecks</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🎯 Próximos Passos</h2>
+                    <ul>
+                        <li>Implementar ML para detecção de anomalias automática</li>
+                        <li>Adicionar distributed tracing com Jaeger</li>
+                        <li>Criar dashboards Grafana para métricas de sistema</li>
+                        <li>Implementar log sampling para reduzir custo</li>
+                    </ul>
+                </section>
+
+                <div class="navigation-buttons">
+                    <a href="../index.html#projects" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <a href="./rate-limiter.html" class="btn btn-primary">
+                        Próximo Projeto <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+        </div>
+    </footer>
+
+    <style>
+        .project-detail {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+        }
+
+        .project-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .project-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .project-badge.interview {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .project-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            color: var(--text-light);
+        }
+
+        .project-content section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .architecture-diagram {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .architecture-diagram pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .component-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .component-card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .challenges {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .challenge-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .challenge-item h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        pre code {
+            display: block;
+            padding: 1.5rem;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .project-header h1 {
+                font-size: 2rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>
