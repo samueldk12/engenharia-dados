@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone - Data Engineering Project</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="../index.html#projects">Projetos</a></li>
+                <li><a href="../index.html#certifications">Certificações</a></li>
+                <li><a href="https://github.com/samueldk12/engenharia-dados">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="project-detail">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Home</a> / 
+                <a href="../index.html#projects">Projetos</a> / 
+                <span>Netflix Clone</span>
+            </div>
+
+            <div class="project-header">
+                <div class="project-badge featured">⭐ PROJETO DESTAQUE</div>
+                <h1>Netflix Clone - Pipeline Completo de Video Streaming</h1>
+                <div class="project-meta">
+                    <span class="meta-item"><i class="fas fa-star"></i> ⭐⭐⭐⭐⭐</span>
+                    <span class="meta-item"><i class="fas fa-clock"></i> 120 minutos</span>
+                    <span class="meta-item"><i class="fas fa-code"></i> Python, FFmpeg, Spark</span>
+                </div>
+            </div>
+
+            <div class="project-content">
+                <section class="overview">
+                    <h2>📋 Visão Geral</h2>
+                    <p>
+                        Pipeline end-to-end de video streaming similar ao Netflix, cobrindo desde ingestão 
+                        e transcodificação de vídeos até recomendações por ML e analytics em tempo real.
+                    </p>
+                    <p>
+                        Este projeto abrange os principais desafios de Data Engineering em escala: 
+                        processamento de mídia, big data, streaming analytics e machine learning.
+                    </p>
+                </section>
+
+                <section class="architecture">
+                    <h2>🏗️ Arquitetura</h2>
+                    <div class="architecture-diagram">
+                        <pre><code>
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Upload     │────▶│ Transcoding  │────▶│   Storage    │
+│  Service    │     │   (FFmpeg)   │     │    (S3)      │
+└─────────────┘     └──────────────┘     └──────────────┘
+                                                │
+                                                ▼
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Analytics  │◀────│   Streaming  │◀────│     CDN      │
+│  (Spark)    │     │    (HLS)     │     │  (CloudFront)│
+└─────────────┘     └──────────────┘     └──────────────┘
+      │                                          │
+      ▼                                          ▼
+┌─────────────┐                           ┌──────────────┐
+│Recommendations│                         │   Players    │
+│     (ML)      │                         │ (Web/Mobile) │
+└─────────────┘                           └──────────────┘
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section class="components">
+                    <h2>🔧 Componentes Principais</h2>
+                    
+                    <div class="component-grid">
+                        <div class="component-card">
+                            <h3><i class="fas fa-film"></i> Video Transcoder</h3>
+                            <p>Transcodificação multi-bitrate com FFmpeg</p>
+                            <ul>
+                                <li>Adaptive Bitrate Streaming (ABR)</li>
+                                <li>Múltiplas resoluções (1080p, 720p, 480p)</li>
+                                <li>HLS/DASH output</li>
+                                <li>Paralelização com multiprocessing</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">FFmpeg</span>
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">S3</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-chart-line"></i> Real-time Analytics</h3>
+                            <p>Processamento de eventos de visualização</p>
+                            <ul>
+                                <li>Kafka para ingestão de eventos</li>
+                                <li>Spark Streaming para processamento</li>
+                                <li>Redis para cache</li>
+                                <li>PostgreSQL para persistência</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Kafka</span>
+                                <span class="tech-tag">Spark</span>
+                                <span class="tech-tag">Redis</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-robot"></i> ML Recommendations</h3>
+                            <p>Sistema de recomendações baseado em CF</p>
+                            <ul>
+                                <li>Matrix Factorization (ALS)</li>
+                                <li>Collaborative Filtering</li>
+                                <li>Training com MLflow</li>
+                                <li>Serving com FastAPI</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Spark MLlib</span>
+                                <span class="tech-tag">MLflow</span>
+                                <span class="tech-tag">FastAPI</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-tachometer-alt"></i> Quality Monitoring</h3>
+                            <p>Monitoramento de qualidade de vídeo</p>
+                            <ul>
+                                <li>VMAF (Video Quality Assessment)</li>
+                                <li>Bitrate analysis</li>
+                                <li>Buffer health tracking</li>
+                                <li>Prometheus metrics</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">VMAF</span>
+                                <span class="tech-tag">Prometheus</span>
+                                <span class="tech-tag">Grafana</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="code-samples">
+                    <h2>💻 Exemplos de Código</h2>
+                    
+                    <h3>Transcodificação Multi-bitrate</h3>
+                    <pre><code class="language-python">
+class VideoTranscoder:
+    def transcode_all(self, profiles):
+        """Transcodificar para múltiplas resoluções"""
+        results = []
+        
+        # Paralelizar transcodificações
+        with Pool(processes=4) as pool:
+            futures = []
+            
+            for profile in profiles:
+                future = pool.apply_async(
+                    self._transcode_profile,
+                    args=(profile,)
+                )
+                futures.append((profile, future))
+            
+            for profile, future in futures:
+                try:
+                    result = future.get(timeout=3600)
+                    results.append(result)
+                    logger.info(f"✓ {profile.profile_name} concluído")
+                except Exception as e:
+                    logger.error(f"✗ {profile.profile_name} falhou: {e}")
+        
+        return results
+                    </code></pre>
+
+                    <h3>Real-time Analytics com Spark Streaming</h3>
+                    <pre><code class="language-python">
+# Processar eventos de playback
+df_stream = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "playback_events") \
+    .load()
+
+# Agregações por janela
+df_agg = df_stream \
+    .groupBy(
+        window(col("timestamp"), "1 minute"),
+        col("content_id")
+    ) \
+    .agg(
+        count("*").alias("views"),
+        avg("bitrate_kbps").alias("avg_bitrate"),
+        avg("buffer_health_sec").alias("avg_buffer")
+    )
+
+# Escrever para PostgreSQL
+query = df_agg.writeStream \
+    .outputMode("update") \
+    .foreachBatch(write_to_postgres) \
+    .start()
+                    </code></pre>
+
+                    <h3>Sistema de Recomendações</h3>
+                    <pre><code class="language-python">
+from pyspark.ml.recommendation import ALS
+
+# Treinar modelo
+als = ALS(
+    maxIter=10,
+    regParam=0.1,
+    userCol="user_id",
+    itemCol="content_id",
+    ratingCol="rating",
+    coldStartStrategy="drop"
+)
+
+model = als.fit(training_data)
+
+# Recomendar top 10 para usuário
+recommendations = model.recommendForAllUsers(10)
+
+# Servir via API
+@app.get("/recommendations/{user_id}")
+def get_recommendations(user_id: int):
+    recs = model.recommendForUsers(
+        spark.createDataFrame([(user_id,)], ["user_id"]),
+        10
+    )
+    return {"recommendations": recs.collect()}
+                    </code></pre>
+                </section>
+
+                <section class="metrics">
+                    <h2>📊 Métricas de Performance</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">10K</div>
+                            <div class="metric-label">Vídeos/dia</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt;100ms</div>
+                            <div class="metric-label">Latência p99</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">1M</div>
+                            <div class="metric-label">Eventos/seg</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">99.9%</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="testing">
+                    <h2>🧪 Testes</h2>
+                    <p>O projeto inclui suite completa de testes:</p>
+                    <ul>
+                        <li><strong>Unit Tests</strong>: 75+ testes para componentes individuais</li>
+                        <li><strong>Integration Tests</strong>: Testes end-to-end do pipeline</li>
+                        <li><strong>Performance Tests</strong>: Benchmarks de throughput e latência</li>
+                        <li><strong>Quality Tests</strong>: Validação VMAF de vídeos</li>
+                    </ul>
+                    <pre><code class="language-bash">
+# Executar testes
+pytest tests/ -v --cov=. --cov-report=html
+
+# Resultados
+tests/test_video_transcoder.py::TestVideoTranscoder::test_create_profile PASSED
+tests/test_analytics.py::TestAnalytics::test_aggregate_events PASSED
+tests/test_recommendations.py::TestRecommendations::test_train_model PASSED
+
+Coverage: 95%
+                    </code></pre>
+                </section>
+
+                <section class="challenges">
+                    <h2>💡 Desafios e Soluções</h2>
+                    
+                    <div class="challenge-item">
+                        <h3>Desafio 1: Transcodificação em Escala</h3>
+                        <p><strong>Problema:</strong> Transcodificar 10K vídeos/dia com múltiplas resoluções</p>
+                        <p><strong>Solução:</strong> 
+                            - Paralelização com multiprocessing<br>
+                            - Queue distribuída com Celery<br>
+                            - Auto-scaling baseado em carga<br>
+                            - Spot instances para reduzir custos (70% economia)
+                        </p>
+                    </div>
+
+                    <div class="challenge-item">
+                        <h3>Desafio 2: Real-time Analytics</h3>
+                        <p><strong>Problema:</strong> Processar 1M eventos/segundo com baixa latência</p>
+                        <p><strong>Solução:</strong>
+                            - Kafka para buffering e resiliência<br>
+                            - Spark Streaming com micro-batches de 1s<br>
+                            - Redis para agregações temporárias<br>
+                            - PostgreSQL com particionamento temporal
+                        </p>
+                    </div>
+
+                    <div class="challenge-item">
+                        <h3>Desafio 3: Cold Start em Recomendações</h3>
+                        <p><strong>Problema:</strong> Novos usuários sem histórico</p>
+                        <p><strong>Solução:</strong>
+                            - Recomendações baseadas em popularidade<br>
+                            - Content-based filtering (metadata)<br>
+                            - A/B testing de estratégias<br>
+                            - Gradual shift para CF com dados
+                        </p>
+                    </div>
+                </section>
+
+                <section class="lessons">
+                    <h2>📖 Aprendizados</h2>
+                    <ul>
+                        <li>Processamento de mídia em escala requer otimizações específicas (codecs, presets)</li>
+                        <li>Real-time analytics exige trade-offs entre latência e precisão</li>
+                        <li>ML em produção precisa de monitoring constante (drift, performance)</li>
+                        <li>Testes automatizados são essenciais para qualidade de vídeo</li>
+                        <li>Observability (logs, metrics, traces) é crítica para debugging</li>
+                    </ul>
+                </section>
+
+                <section class="links">
+                    <h2>🔗 Links</h2>
+                    <div class="link-grid">
+                        <a href="https://github.com/samueldk12/engenharia-dados/tree/main/09-projetos-praticos/projeto-netflix-clone" class="link-card">
+                            <i class="fab fa-github"></i>
+                            <span>Código Fonte</span>
+                        </a>
+                        <a href="#" class="link-card">
+                            <i class="fas fa-book"></i>
+                            <span>Documentação</span>
+                        </a>
+                        <a href="#" class="link-card">
+                            <i class="fas fa-video"></i>
+                            <span>Demo Video</span>
+                        </a>
+                    </div>
+                </section>
+
+                <div class="navigation-buttons">
+                    <a href="../index.html#projects" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar para Projetos
+                    </a>
+                    <a href="./log-processing.html" class="btn btn-primary">
+                        Próximo Projeto <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+        </div>
+    </footer>
+
+    <style>
+        .project-detail {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .project-header {
+            margin-bottom: 3rem;
+        }
+
+        .project-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .project-badge.featured {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .project-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .project-content section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .project-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .project-content h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--primary);
+        }
+
+        .architecture-diagram {
+            background: var(--dark);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .architecture-diagram pre {
+            margin: 0;
+            color: #10b981;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .component-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .component-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .component-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0;
+        }
+
+        .component-card ul {
+            margin: 1rem 0;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        pre code {
+            display: block;
+            background: var(--dark);
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: var(--light);
+            border-radius: 0.75rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .challenge-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .link-card:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .link-card i {
+            font-size: 1.5rem;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .project-header h1 {
+                font-size: 2rem;
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>
