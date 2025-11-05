@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Data Platform - Projeto Prático</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="../index.html#projects">Projetos</a></li>
+                <li><a href="https://github.com/samueldk12/engenharia-dados">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="project-detail">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Início</a>
+                <span>/</span>
+                <a href="../index.html#projects">Projetos</a>
+                <span>/</span>
+                <span>E-commerce Data Platform</span>
+            </div>
+
+            <div class="project-header">
+                <div class="project-badge interview">Interview Project</div>
+                <h1>🛒 E-commerce Data Platform</h1>
+                <p class="project-subtitle">
+                    Plataforma completa de dados para e-commerce: CDC, Data Warehouse, Recomendações e BI
+                </p>
+                <div class="project-meta">
+                    <span><i class="fas fa-star"></i> Dificuldade: 5/5</span>
+                    <span><i class="fas fa-clock"></i> 120 minutos</span>
+                    <span><i class="fas fa-users"></i> Interview Project</span>
+                </div>
+            </div>
+
+            <div class="project-content">
+                <section>
+                    <h2>🎯 Problema</h2>
+                    <p>
+                        Construa uma plataforma de dados end-to-end para um e-commerce que processa 
+                        <strong>50 milhões de eventos por dia</strong> com os seguintes requisitos:
+                    </p>
+                    <ul>
+                        <li><strong>CDC Pipeline:</strong> Capturar mudanças do banco transacional em tempo real</li>
+                        <li><strong>Data Warehouse:</strong> Star schema para analytics com SCD Type 2</li>
+                        <li><strong>Recommendation Engine:</strong> Sistema de recomendações baseado em comportamento</li>
+                        <li><strong>Real-time Dashboards:</strong> Métricas de vendas, estoque, conversão</li>
+                        <li><strong>ML Features:</strong> Feature store para modelos de ML (churn, upsell)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🏗️ Arquitetura</h2>
+                    <div class="architecture-diagram">
+                        <pre><code>
+┌──────────────────────────────────────────────────────────────────┐
+│                    Transactional Databases                       │
+│     PostgreSQL (Orders, Users) + MongoDB (Product Catalog)       │
+└────────┬────────────────────────┬──────────────────┬─────────────┘
+         │                        │                  │
+         ▼ (CDC)                  ▼ (Events)         ▼ (Clickstream)
+┌─────────────────┐      ┌──────────────┐     ┌─────────────────┐
+│  Debezium CDC   │      │  Kafka       │     │  Web Analytics  │
+│  (Postgres)     │─────▶│  Topics      │◀────│  (Segment)      │
+└─────────────────┘      └──────┬───────┘     └─────────────────┘
+                                │
+                ┌───────────────┼──────────────┐
+                │               │              │
+                ▼               ▼              ▼
+        ┌──────────┐    ┌──────────┐   ┌────────────┐
+        │  Spark   │    │  Flink   │   │   S3 Raw   │
+        │  Batch   │    │ Streaming│   │  (Bronze)  │
+        └────┬─────┘    └────┬─────┘   └────────────┘
+             │               │
+             ▼               ▼
+        ┌─────────────────────────────┐
+        │    Data Warehouse           │
+        │  (Snowflake/Redshift)       │
+        │  Star Schema + SCD Type 2   │
+        └─────┬───────────────────────┘
+              │
+    ┌─────────┼─────────────┐
+    ▼         ▼             ▼
+┌────────┐ ┌────────┐ ┌───────────┐
+│  BI    │ │Feature │ │    ML     │
+│Tableau │ │ Store  │ │Recommend. │
+└────────┘ └────────┘ └───────────┘
+        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>🔧 Componentes</h2>
+                    <div class="component-grid">
+                        <div class="component-card">
+                            <h3><i class="fas fa-exchange-alt"></i> CDC Pipeline</h3>
+                            <ul>
+                                <li>Debezium para captura de mudanças</li>
+                                <li>Kafka Connect para streaming</li>
+                                <li>Suporta PostgreSQL + MongoDB</li>
+                                <li>Latência: < 1 segundo</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Debezium</span>
+                                <span class="tech-tag">Kafka</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-database"></i> Data Warehouse</h3>
+                            <ul>
+                                <li>Star schema (fact_orders, dim_customers)</li>
+                                <li>SCD Type 2 para histórico de mudanças</li>
+                                <li>Particionamento por data</li>
+                                <li>Materializado views para performance</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Snowflake</span>
+                                <span class="tech-tag">dbt</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-brain"></i> Recommendation Engine</h3>
+                            <ul>
+                                <li>Collaborative filtering (ALS)</li>
+                                <li>Content-based filtering</li>
+                                <li>Hybrid approach</li>
+                                <li>Near real-time retraining</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Spark MLlib</span>
+                                <span class="tech-tag">Redis</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-chart-bar"></i> Real-Time Dashboards</h3>
+                            <ul>
+                                <li>Métricas: GMV, conversão, AOV</li>
+                                <li>Alertas automáticos</li>
+                                <li>Drill-down por categoria/região</li>
+                                <li>Refresh: 5 minutos</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Tableau</span>
+                                <span class="tech-tag">Superset</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💻 Implementação</h2>
+                    
+                    <h3>1. CDC Setup (Debezium)</h3>
+                    <pre><code class="language-json">
+{
+  "name": "postgres-source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "debezium",
+    "database.password": "dbz",
+    "database.dbname": "ecommerce",
+    "database.server.name": "ecommerce-db",
+    "table.include.list": "public.orders,public.users,public.order_items",
+    "plugin.name": "pgoutput",
+    "publication.name": "dbz_publication",
+    "slot.name": "debezium_slot",
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "cdc.$3"
+  }
+}
+                    </code></pre>
+
+                    <h3>2. Data Warehouse Schema (dbt)</h3>
+                    <pre><code class="language-sql">
+-- models/dim_customers.sql (SCD Type 2)
+{{
+  config(
+    materialized='incremental',
+    unique_key='customer_id',
+    on_schema_change='sync_all_columns'
+  )
+}}
+
+WITH source AS (
+    SELECT
+        user_id,
+        email,
+        first_name,
+        last_name,
+        country,
+        created_at,
+        updated_at
+    FROM {{ source('cdc', 'users') }}
+),
+
+changes AS (
+    SELECT
+        user_id AS customer_id,
+        email,
+        first_name,
+        last_name,
+        country,
+        updated_at AS valid_from,
+        LEAD(updated_at) OVER (
+            PARTITION BY user_id 
+            ORDER BY updated_at
+        ) AS valid_to,
+        CASE 
+            WHEN LEAD(updated_at) OVER (
+                PARTITION BY user_id 
+                ORDER BY updated_at
+            ) IS NULL THEN TRUE 
+            ELSE FALSE 
+        END AS is_current
+    FROM source
+)
+
+SELECT
+    {{ dbt_utils.surrogate_key(['customer_id', 'valid_from']) }} AS customer_key,
+    customer_id,
+    email,
+    first_name,
+    last_name,
+    country,
+    valid_from,
+    COALESCE(valid_to, '2099-12-31'::timestamp) AS valid_to,
+    is_current
+FROM changes
+                    </code></pre>
+
+                    <pre><code class="language-sql">
+-- models/fact_orders.sql
+{{
+  config(
+    materialized='incremental',
+    unique_key='order_id',
+    partition_by={
+      "field": "order_date",
+      "data_type": "date",
+      "granularity": "day"
+    }
+  )
+}}
+
+WITH orders AS (
+    SELECT * FROM {{ source('cdc', 'orders') }}
+),
+
+order_items AS (
+    SELECT * FROM {{ source('cdc', 'order_items') }}
+),
+
+customers AS (
+    SELECT * FROM {{ ref('dim_customers') }}
+    WHERE is_current = TRUE
+),
+
+products AS (
+    SELECT * FROM {{ ref('dim_products') }}
+),
+
+date_dim AS (
+    SELECT * FROM {{ ref('dim_date') }}
+)
+
+SELECT
+    o.order_id,
+    d.date_key,
+    c.customer_key,
+    p.product_key,
+    oi.quantity,
+    oi.unit_price,
+    oi.quantity * oi.unit_price AS line_total,
+    o.total_amount AS order_total,
+    o.status,
+    o.created_at AS order_timestamp
+FROM orders o
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN customers c ON o.user_id = c.customer_id
+JOIN products p ON oi.product_id = p.product_id
+JOIN date_dim d ON DATE(o.created_at) = d.date_actual
+
+{% if is_incremental() %}
+WHERE o.created_at > (SELECT MAX(order_timestamp) FROM {{ this }})
+{% endif %}
+                    </code></pre>
+
+                    <h3>3. Recommendation Engine (Spark ALS)</h3>
+                    <pre><code class="language-python">
+from pyspark.ml.recommendation import ALS
+from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.sql.functions import col, explode
+
+# Load interaction data (user views, purchases)
+interactions = spark.read.table("warehouse.fact_interactions")
+
+# Prepare training data
+training_data = interactions \
+    .select(
+        col("customer_id").cast("int").alias("user_id"),
+        col("product_id").cast("int"),
+        col("interaction_score").cast("float")  # 1=view, 3=cart, 5=purchase
+    )
+
+# Train ALS model
+als = ALS(
+    maxIter=10,
+    regParam=0.1,
+    userCol="user_id",
+    itemCol="product_id",
+    ratingCol="interaction_score",
+    coldStartStrategy="drop",
+    nonnegative=True
+)
+
+model = als.fit(training_data)
+
+# Generate top 10 recommendations for each user
+user_recs = model.recommendForAllUsers(10)
+
+# Flatten and save to Redis for real-time serving
+user_recs_flat = user_recs \
+    .select(
+        col("user_id"),
+        explode(col("recommendations")).alias("rec")
+    ) \
+    .select(
+        col("user_id"),
+        col("rec.product_id"),
+        col("rec.rating").alias("score")
+    )
+
+# Write to Redis
+def write_recommendations_to_redis(batch_df, batch_id):
+    for row in batch_df.collect():
+        user_id = row['user_id']
+        product_id = row['product_id']
+        score = row['score']
+        
+        # Store as sorted set (ZADD)
+        redis_client.zadd(
+            f"user:{user_id}:recommendations",
+            {str(product_id): score}
+        )
+        redis_client.expire(f"user:{user_id}:recommendations", 86400)  # 24h TTL
+
+user_recs_flat.foreach(lambda row: write_to_redis(row))
+
+# Content-based filtering (for cold start)
+from pyspark.ml.feature import HashingTF, IDF
+
+products = spark.read.table("warehouse.dim_products")
+
+# Vectorize product descriptions
+hashingTF = HashingTF(inputCol="description_tokens", outputCol="raw_features")
+tf = hashingTF.transform(products)
+
+idf = IDF(inputCol="raw_features", outputCol="features")
+idf_model = idf.fit(tf)
+tfidf = idf_model.transform(tf)
+
+# Calculate similarity using cosine distance
+from pyspark.ml.linalg import Vectors
+from pyspark.sql.functions import udf
+
+def cosine_similarity(v1, v2):
+    return float(v1.dot(v2) / (v1.norm(2) * v2.norm(2)))
+
+cosine_udf = udf(cosine_similarity, FloatType())
+
+# Similar products for each product
+similar_products = tfidf.alias("a") \
+    .join(tfidf.alias("b"), col("a.product_id") < col("b.product_id")) \
+    .select(
+        col("a.product_id").alias("product_id_1"),
+        col("b.product_id").alias("product_id_2"),
+        cosine_udf(col("a.features"), col("b.features")).alias("similarity")
+    ) \
+    .filter(col("similarity") > 0.5) \
+    .orderBy(col("similarity"), ascending=False)
+
+similar_products.write.saveAsTable("warehouse.similar_products")
+                    </code></pre>
+
+                    <h3>4. Real-Time Metrics (Spark Streaming)</h3>
+                    <pre><code class="language-python">
+from pyspark.sql.functions import *
+
+# Read order events from Kafka
+order_events = spark \
+    .readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "cdc.orders") \
+    .load()
+
+# Parse and aggregate
+metrics = order_events \
+    .select(from_json(col("value").cast("string"), order_schema).alias("data")) \
+    .select("data.*") \
+    .filter(col("status") == "completed") \
+    .withWatermark("created_at", "5 minutes") \
+    .groupBy(
+        window(col("created_at"), "5 minutes"),
+        col("country")
+    ) \
+    .agg(
+        count("*").alias("order_count"),
+        sum("total_amount").alias("gmv"),
+        avg("total_amount").alias("average_order_value"),
+        countDistinct("user_id").alias("unique_customers")
+    )
+
+# Write to materialized view in warehouse
+metrics.writeStream \
+    .format("snowflake") \
+    .option("dbtable", "real_time_metrics") \
+    .option("checkpointLocation", "/tmp/checkpoint/metrics") \
+    .trigger(processingTime="5 minutes") \
+    .start()
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>📊 Métricas</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">50M+</div>
+                            <div class="metric-label">Events/dia</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt;1s</div>
+                            <div class="metric-label">CDC Latency</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">10TB+</div>
+                            <div class="metric-label">Data Warehouse</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">+25%</div>
+                            <div class="metric-label">Conversion Lift</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>⚠️ Desafios e Soluções</h2>
+                    <div class="challenges">
+                        <div class="challenge-item">
+                            <h4>🔄 CDC Consistency</h4>
+                            <p><strong>Solução:</strong> Debezium garante exactly-once delivery com transactional outbox pattern</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>📈 Data Warehouse Scale</h4>
+                            <p><strong>Solução:</strong> Particionamento por data + clustering keys para queries otimizadas</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🧠 Recommendation Quality</h4>
+                            <p><strong>Solução:</strong> Hybrid approach (collaborative + content-based) para cold start</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>⚡ Real-Time Performance</h4>
+                            <p><strong>Solução:</strong> Materialized views + Redis cache para sub-second queries</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🔍 Data Quality</h4>
+                            <p><strong>Solução:</strong> Great Expectations + dbt tests para validação contínua</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💡 Lições Aprendidas</h2>
+                    <ul>
+                        <li><strong>Debezium CDC:</strong> Muito mais confiável que custom CDC. Setup inicial complexo mas vale a pena.</li>
+                        <li><strong>SCD Type 2:</strong> Essencial para analytics histórico. Use dbt para simplificar lógica.</li>
+                        <li><strong>Star Schema:</strong> Ainda é o padrão ouro para analytics. Denormalize para performance.</li>
+                        <li><strong>ALS Algorithm:</strong> Funciona bem para e-commerce. Combine com content-based para cold start.</li>
+                        <li><strong>Partitioning:</strong> Particionar fact tables por data reduz scan em 100x.</li>
+                        <li><strong>Materalized Views:</strong> Para dashboards real-time, pre-aggregate com MVs.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🎯 Próximos Passos</h2>
+                    <ul>
+                        <li>Implementar Customer 360 view unificada</li>
+                        <li>Churn prediction com ML (XGBoost)</li>
+                        <li>Dynamic pricing baseado em demanda</li>
+                        <li>Data mesh architecture para escalar times</li>
+                    </ul>
+                </section>
+
+                <div class="navigation-buttons">
+                    <a href="./ride-sharing.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </a>
+                    <a href="../index.html#projects" class="btn btn-primary">
+                        Ver Todos Projetos <i class="fas fa-th"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+        </div>
+    </footer>
+
+    <style>
+        .project-detail {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+        }
+
+        .project-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .project-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .project-badge.interview {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .project-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            color: var(--text-light);
+        }
+
+        .project-content section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .architecture-diagram {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .architecture-diagram pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .component-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .component-card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .challenges {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .challenge-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .challenge-item h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        pre code {
+            display: block;
+            padding: 1.5rem;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .project-header h1 {
+                font-size: 2rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

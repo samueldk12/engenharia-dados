@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride-Sharing Analytics - Projeto Prático</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="../index.html#projects">Projetos</a></li>
+                <li><a href="https://github.com/samueldk12/engenharia-dados">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="project-detail">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="../index.html">Início</a>
+                <span>/</span>
+                <a href="../index.html#projects">Projetos</a>
+                <span>/</span>
+                <span>Ride-Sharing Analytics</span>
+            </div>
+
+            <div class="project-header">
+                <div class="project-badge interview">Interview Project</div>
+                <h1>🚗 Ride-Sharing Real-Time Analytics</h1>
+                <p class="project-subtitle">
+                    Plataforma de analytics em tempo real para otimização de matching driver-passageiro
+                </p>
+                <div class="project-meta">
+                    <span><i class="fas fa-star"></i> Dificuldade: 5/5</span>
+                    <span><i class="fas fa-clock"></i> 120 minutos</span>
+                    <span><i class="fas fa-users"></i> Interview Project</span>
+                </div>
+            </div>
+
+            <div class="project-content">
+                <section>
+                    <h2>🎯 Problema</h2>
+                    <p>
+                        Construa uma plataforma de analytics para um serviço de ride-sharing (tipo Uber) que processa 
+                        <strong>10 milhões de viagens por dia</strong> com os seguintes requisitos:
+                    </p>
+                    <ul>
+                        <li><strong>Real-time matching:</strong> Conectar passageiros a motoristas em < 2 segundos</li>
+                        <li><strong>Surge pricing:</strong> Calcular preços dinâmicos baseados em demanda em tempo real</li>
+                        <li><strong>Driver analytics:</strong> Métricas de performance, earnings, rating</li>
+                        <li><strong>Heat maps:</strong> Visualização de demanda por região</li>
+                        <li><strong>ETA prediction:</strong> ML para prever tempo de chegada</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🏗️ Arquitetura</h2>
+                    <div class="architecture-diagram">
+                        <pre><code>
+                     ┌─────────────────────────────────────┐
+                     │         Mobile Apps                 │
+                     │  (Driver + Passenger)               │
+                     └────────┬───────────────┬────────────┘
+                              │               │
+                    ┌─────────▼──────┐ ┌─────▼──────────┐
+                    │  Location API  │ │  Booking API   │
+                    │  (WebSocket)   │ │   (REST)       │
+                    └────────┬───────┘ └─────┬──────────┘
+                             │               │
+                             ▼               ▼
+                    ┌─────────────────────────────┐
+                    │         Kafka               │
+                    │  Topics: locations, rides   │
+                    └────┬────────────────┬───────┘
+                         │                │
+            ┌────────────▼────┐    ┌─────▼──────────────┐
+            │ Flink Streaming │    │  Spark Streaming   │
+            │  (Matching)     │    │  (Analytics)       │
+            └────────┬─────────┘    └─────┬─────────────┘
+                     │                    │
+        ┌────────────▼────────┐    ┌──────▼──────────────┐
+        │    Redis/Geohash    │    │  Cassandra + S3     │
+        │  (Driver location)  │    │  (Historical Data)  │
+        └─────────────────────┘    └─────────────────────┘
+        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>🔧 Componentes</h2>
+                    <div class="component-grid">
+                        <div class="component-card">
+                            <h3><i class="fas fa-map-marked-alt"></i> Location Tracking</h3>
+                            <ul>
+                                <li>WebSocket para updates de localização</li>
+                                <li>Redis Geospatial para busca por raio</li>
+                                <li>Geohash para particionamento espacial</li>
+                                <li>TTL de 5 minutos para limpeza</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Redis</span>
+                                <span class="tech-tag">Geohash</span>
+                                <span class="tech-tag">WebSocket</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-bolt"></i> Real-Time Matching</h3>
+                            <ul>
+                                <li>Apache Flink para processamento CEP</li>
+                                <li>Algoritmo de matching por proximidade</li>
+                                <li>Considera: distância, rating, preço</li>
+                                <li>SLA: < 2 segundos para match</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Flink</span>
+                                <span class="tech-tag">CEP</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-chart-line"></i> Surge Pricing</h3>
+                            <ul>
+                                <li>Calcula demanda vs oferta por região</li>
+                                <li>Agregações em janelas de 1 minuto</li>
+                                <li>Multiplicador dinâmico (1.0x - 5.0x)</li>
+                                <li>Notifica drivers/passageiros</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Spark</span>
+                                <span class="tech-tag">Kafka</span>
+                            </div>
+                        </div>
+
+                        <div class="component-card">
+                            <h3><i class="fas fa-brain"></i> ETA Prediction</h3>
+                            <ul>
+                                <li>ML model (XGBoost) para previsão</li>
+                                <li>Features: distância, tráfego, hora</li>
+                                <li>Retreino semanal com novos dados</li>
+                                <li>MAE < 2 minutos</li>
+                            </ul>
+                            <div class="tech-stack">
+                                <span class="tech-tag">MLflow</span>
+                                <span class="tech-tag">XGBoost</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💻 Implementação</h2>
+                    
+                    <h3>1. Location Tracking (Redis Geospatial)</h3>
+                    <pre><code class="language-python">
+import redis
+from typing import List, Tuple
+
+class LocationService:
+    def __init__(self, redis_client: redis.Redis):
+        self.redis = redis_client
+    
+    def update_driver_location(self, driver_id: str, lat: float, lon: float):
+        """Update driver location in Redis."""
+        key = "drivers:active:locations"
+        self.redis.geoadd(key, lon, lat, driver_id)
+        self.redis.expire(key, 300)  # TTL 5 minutes
+        
+        # Store metadata
+        self.redis.hset(f"driver:{driver_id}", mapping={
+            "lat": lat,
+            "lon": lon,
+            "last_update": time.time(),
+            "status": "available"
+        })
+    
+    def find_nearby_drivers(
+        self, 
+        lat: float, 
+        lon: float, 
+        radius_km: float = 5.0,
+        limit: int = 10
+    ) -> List[Tuple[str, float]]:
+        """Find available drivers within radius."""
+        key = "drivers:active:locations"
+        
+        # GEORADIUS returns drivers sorted by distance
+        results = self.redis.georadius(
+            key,
+            longitude=lon,
+            latitude=lat,
+            radius=radius_km,
+            unit='km',
+            withdist=True,
+            sort='ASC',
+            count=limit
+        )
+        
+        # Filter only available drivers
+        available_drivers = []
+        for driver_id, distance in results:
+            status = self.redis.hget(f"driver:{driver_id}", "status")
+            if status == b"available":
+                available_drivers.append((driver_id.decode(), distance))
+        
+        return available_drivers
+
+# Usage
+location_service = LocationService(redis_client)
+
+# Update driver location (called every 30 seconds)
+location_service.update_driver_location("driver_123", lat=-23.5505, lon=-46.6333)
+
+# Find nearby drivers when passenger requests ride
+nearby = location_service.find_nearby_drivers(lat=-23.5510, lon=-46.6340, radius_km=3.0)
+print(f"Found {len(nearby)} drivers nearby")
+                    </code></pre>
+
+                    <h3>2. Real-Time Matching (Apache Flink)</h3>
+                    <pre><code class="language-python">
+from pyflink.datastream import StreamExecutionEnvironment
+from pyflink.datastream.functions import ProcessFunction
+from pyflink.common.typeinfo import Types
+
+class RideMatchingFunction(ProcessFunction):
+    def __init__(self, location_service):
+        self.location_service = location_service
+        self.pending_rides = {}  # ride_id -> ride_request
+    
+    def process_element(self, value, ctx):
+        event_type = value['type']
+        
+        if event_type == 'ride_request':
+            ride_id = value['ride_id']
+            passenger_lat = value['pickup_lat']
+            passenger_lon = value['pickup_lon']
+            
+            # Find nearby drivers
+            nearby_drivers = self.location_service.find_nearby_drivers(
+                passenger_lat, passenger_lon, radius_km=5.0, limit=10
+            )
+            
+            if nearby_drivers:
+                # Match with closest available driver
+                driver_id, distance = nearby_drivers[0]
+                
+                # Calculate ETA
+                eta_minutes = self.predict_eta(distance)
+                
+                # Emit match event
+                yield {
+                    'type': 'ride_matched',
+                    'ride_id': ride_id,
+                    'driver_id': driver_id,
+                    'distance_km': distance,
+                    'eta_minutes': eta_minutes,
+                    'timestamp': ctx.timestamp()
+                }
+                
+                # Update driver status
+                self.location_service.redis.hset(
+                    f"driver:{driver_id}", "status", "busy"
+                )
+            else:
+                # No drivers available - add to waiting queue
+                self.pending_rides[ride_id] = value
+                ctx.timer_service().register_event_time_timer(
+                    ctx.timestamp() + 30000  # Retry after 30 seconds
+                )
+    
+    def on_timer(self, timestamp, ctx):
+        # Retry matching for pending rides
+        for ride_id, ride_request in list(self.pending_rides.items()):
+            # Retry matching logic...
+            pass
+    
+    def predict_eta(self, distance_km: float) -> int:
+        # Simplified ETA calculation (use ML model in production)
+        avg_speed_kmh = 30  # Average city speed
+        eta_minutes = (distance_km / avg_speed_kmh) * 60
+        return int(eta_minutes)
+
+# Flink Job
+env = StreamExecutionEnvironment.get_execution_environment()
+
+# Read from Kafka
+ride_requests = env.add_source(
+    FlinkKafkaConsumer('ride-requests', schema, properties)
+)
+
+# Match rides with drivers
+matches = ride_requests.process(RideMatchingFunction(location_service))
+
+# Write matches to Kafka
+matches.add_sink(
+    FlinkKafkaProducer('ride-matches', schema, properties)
+)
+
+env.execute("RideMatching")
+                    </code></pre>
+
+                    <h3>3. Surge Pricing (Spark Streaming)</h3>
+                    <pre><code class="language-python">
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+spark = SparkSession.builder.appName("SurgePricing").getOrCreate()
+
+# Read ride events from Kafka
+ride_events = spark \
+    .readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "ride-events") \
+    .load()
+
+# Parse events
+parsed_events = ride_events \
+    .select(from_json(col("value").cast("string"), event_schema).alias("data")) \
+    .select("data.*")
+
+# Define geographic grid (geohash precision 5 = ~5km x 5km)
+def lat_lon_to_geohash(lat, lon, precision=5):
+    import geohash2
+    return geohash2.encode(lat, lon, precision)
+
+geohash_udf = udf(lat_lon_to_geohash, StringType())
+
+events_with_geohash = parsed_events \
+    .withColumn("geohash", geohash_udf(col("lat"), col("lon")))
+
+# Calculate supply (available drivers) and demand (ride requests)
+supply_demand = events_with_geohash \
+    .withWatermark("timestamp", "2 minutes") \
+    .groupBy(
+        window(col("timestamp"), "1 minute"),
+        col("geohash")
+    ) \
+    .agg(
+        count_if(col("event_type") == "driver_available").alias("supply"),
+        count_if(col("event_type") == "ride_request").alias("demand")
+    )
+
+# Calculate surge multiplier
+surge_pricing = supply_demand \
+    .withColumn("ratio", 
+        when(col("supply") > 0, col("demand") / col("supply"))
+        .otherwise(lit(10.0))  # High surge if no supply
+    ) \
+    .withColumn("surge_multiplier",
+        when(col("ratio") < 1.0, lit(1.0))       # No surge
+        .when(col("ratio") < 2.0, lit(1.5))      # 1.5x
+        .when(col("ratio") < 3.0, lit(2.0))      # 2.0x
+        .when(col("ratio") < 5.0, lit(3.0))      # 3.0x
+        .otherwise(lit(5.0))                      # 5.0x max
+    ) \
+    .select("window", "geohash", "supply", "demand", "surge_multiplier")
+
+# Write to Redis for real-time access
+def write_to_redis(batch_df, batch_id):
+    for row in batch_df.collect():
+        geohash = row['geohash']
+        surge = row['surge_multiplier']
+        redis_client.setex(
+            f"surge:{geohash}", 
+            120,  # TTL 2 minutes
+            surge
+        )
+
+surge_pricing.writeStream \
+    .foreachBatch(write_to_redis) \
+    .start()
+
+spark.streams.awaitAnyTermination()
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>📊 Métricas</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">10M+</div>
+                            <div class="metric-label">Rides/dia</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt;2s</div>
+                            <div class="metric-label">Match Time</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">95%</div>
+                            <div class="metric-label">Match Success</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">&lt;2min</div>
+                            <div class="metric-label">ETA MAE</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>⚠️ Desafios e Soluções</h2>
+                    <div class="challenges">
+                        <div class="challenge-item">
+                            <h4>🌍 Escala Geográfica</h4>
+                            <p><strong>Solução:</strong> Geohash para particionamento espacial, Redis sharding por região</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>⚡ Latência de Matching</h4>
+                            <p><strong>Solução:</strong> Redis Geospatial + Flink CEP para processamento em < 2s</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>💰 Surge Pricing Accuracy</h4>
+                            <p><strong>Solução:</strong> Janelas deslizantes de 1 minuto para capturar demanda em tempo real</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>📍 Location Data Volume</h4>
+                            <p><strong>Solução:</strong> TTL de 5 minutos, updates apenas quando mudança > 50m</p>
+                        </div>
+                        <div class="challenge-item">
+                            <h4>🔮 ETA Prediction</h4>
+                            <p><strong>Solução:</strong> ML model com features de tráfego histórico + APIs externas</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>💡 Lições Aprendidas</h2>
+                    <ul>
+                        <li><strong>Geohash:</strong> Essencial para particionamento espacial eficiente. Precision 5 (~5km) ideal para cidades.</li>
+                        <li><strong>Redis Geospatial:</strong> GEORADIUS otimizado para busca por proximidade em < 10ms.</li>
+                        <li><strong>Flink vs Spark:</strong> Flink melhor para matching (latência baixa), Spark para analytics (throughput).</li>
+                        <li><strong>Location Updates:</strong> Throttle updates (apenas quando mudança > 50m) reduz carga em 80%.</li>
+                        <li><strong>Surge Pricing:</strong> Notificar usuários antes de aplicar surge evita surpresas negativas.</li>
+                        <li><strong>ETA Prediction:</strong> Combine modelo ML com APIs de tráfego em tempo real para melhor acurácia.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>🎯 Próximos Passos</h2>
+                    <ul>
+                        <li>Implementar ride-pooling para otimizar rotas compartilhadas</li>
+                        <li>Previsão de demanda com LSTM para planejamento de drivers</li>
+                        <li>Fraud detection para rides fraudulentas</li>
+                        <li>Dynamic routing com GraphHopper/OSRM</li>
+                    </ul>
+                </section>
+
+                <div class="navigation-buttons">
+                    <a href="./rate-limiter.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </a>
+                    <a href="./ecommerce-data.html" class="btn btn-primary">
+                        Próximo Projeto <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+        </div>
+    </footer>
+
+    <style>
+        .project-detail {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+        }
+
+        .project-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .project-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .project-badge.interview {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .project-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            color: var(--text-light);
+        }
+
+        .project-content section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .architecture-diagram {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .architecture-diagram pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .component-card {
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .component-card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .challenges {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .challenge-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .challenge-item h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        pre code {
+            display: block;
+            padding: 1.5rem;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .project-header h1 {
+                font-size: 2rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

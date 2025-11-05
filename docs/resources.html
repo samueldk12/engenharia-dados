@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos e Ferramentas - Data Engineering</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-database"></i>
+                    <span>Data Engineering Roadmap</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="index.html#projects">Projetos</a></li>
+                <li><a href="index.html#certifications">Certificações</a></li>
+                <li><a href="resources.html" class="active">Recursos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="resources-page">
+        <div class="container">
+            <h1 class="page-title">📚 Recursos e Ferramentas</h1>
+            <p class="page-subtitle">
+                Curadoria completa de recursos, ferramentas, livros, cursos e comunidades 
+                para se tornar um Engenheiro de Dados Sênior.
+            </p>
+
+            <!-- Tools Section -->
+            <section class="resources-section">
+                <h2 class="section-title">🛠️ Ferramentas Essenciais</h2>
+                
+                <div class="tools-category">
+                    <h3><i class="fas fa-database"></i> Processamento de Dados</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Apache Spark</h4>
+                                <a href="https://spark.apache.org/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Engine de processamento distribuído para big data</p>
+                            <div class="tool-tags">
+                                <span>Batch</span>
+                                <span>Streaming</span>
+                                <span>SQL</span>
+                                <span>ML</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Apache Flink</h4>
+                                <a href="https://flink.apache.org/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Stream processing com baixa latência</p>
+                            <div class="tool-tags">
+                                <span>Streaming</span>
+                                <span>Real-time</span>
+                                <span>CEP</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>dbt (Data Build Tool)</h4>
+                                <a href="https://www.getdbt.com/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Transformações SQL com version control e testing</p>
+                            <div class="tool-tags">
+                                <span>SQL</span>
+                                <span>Transformations</span>
+                                <span>Testing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tools-category">
+                    <h3><i class="fas fa-stream"></i> Streaming & Messaging</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Apache Kafka</h4>
+                                <a href="https://kafka.apache.org/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Platform de streaming distribuído</p>
+                            <div class="tool-tags">
+                                <span>Streaming</span>
+                                <span>Pub/Sub</span>
+                                <span>Events</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Apache Pulsar</h4>
+                                <a href="https://pulsar.apache.org/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Messaging e streaming multi-tenant</p>
+                            <div class="tool-tags">
+                                <span>Messaging</span>
+                                <span>Multi-tenant</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>RabbitMQ</h4>
+                                <a href="https://www.rabbitmq.com/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Message broker com suporte a múltiplos protocolos</p>
+                            <div class="tool-tags">
+                                <span>Queuing</span>
+                                <span>AMQP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tools-category">
+                    <h3><i class="fas fa-tasks"></i> Orquestração</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Apache Airflow</h4>
+                                <a href="https://airflow.apache.org/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Plataforma de orquestração de workflows</p>
+                            <div class="tool-tags">
+                                <span>Workflows</span>
+                                <span>DAGs</span>
+                                <span>Scheduling</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Prefect</h4>
+                                <a href="https://www.prefect.io/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Modern workflow orchestration</p>
+                            <div class="tool-tags">
+                                <span>Python-native</span>
+                                <span>Workflows</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Dagster</h4>
+                                <a href="https://dagster.io/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Data orchestrator com testing integrado</p>
+                            <div class="tool-tags">
+                                <span>Orchestration</span>
+                                <span>Testing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tools-category">
+                    <h3><i class="fas fa-warehouse"></i> Data Warehouses</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Snowflake</h4>
+                                <a href="https://www.snowflake.com/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Cloud data warehouse com separação compute/storage</p>
+                            <div class="tool-tags">
+                                <span>Cloud-native</span>
+                                <span>SQL</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Google BigQuery</h4>
+                                <a href="https://cloud.google.com/bigquery" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Serverless data warehouse do GCP</p>
+                            <div class="tool-tags">
+                                <span>Serverless</span>
+                                <span>Petabyte-scale</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Amazon Redshift</h4>
+                                <a href="https://aws.amazon.com/redshift/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Data warehouse colunar da AWS</p>
+                            <div class="tool-tags">
+                                <span>AWS</span>
+                                <span>Columnar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tools-category">
+                    <h3><i class="fas fa-check-circle"></i> Data Quality</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Great Expectations</h4>
+                                <a href="https://greatexpectations.io/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Framework de validação de qualidade de dados</p>
+                            <div class="tool-tags">
+                                <span>Testing</span>
+                                <span>Validation</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Apache Griffin</h4>
+                                <a href="https://griffin.apache.org/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Data quality solution para big data</p>
+                            <div class="tool-tags">
+                                <span>Quality</span>
+                                <span>Monitoring</span>
+                            </div>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <h4>Soda</h4>
+                                <a href="https://www.soda.io/" target="_blank" class="tool-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            <p>Data quality monitoring e alerting</p>
+                            <div class="tool-tags">
+                                <span>Monitoring</span>
+                                <span>Alerts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Books Section -->
+            <section class="resources-section">
+                <h2 class="section-title">📖 Livros Recomendados</h2>
+                <div class="books-grid">
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>Designing Data-Intensive Applications</h4>
+                        <p class="book-author">Martin Kleppmann</p>
+                        <p class="book-description">
+                            Fundamentos de sistemas distribuídos, consistency, replication, partitioning.
+                        </p>
+                        <div class="book-level">Intermediário-Avançado</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>The Data Warehouse Toolkit</h4>
+                        <p class="book-author">Ralph Kimball</p>
+                        <p class="book-description">
+                            Bíblia da modelagem dimensional (Star Schema, Slowly Changing Dimensions).
+                        </p>
+                        <div class="book-level">Básico-Intermediário</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>Spark: The Definitive Guide</h4>
+                        <p class="book-author">Bill Chambers & Matei Zaharia</p>
+                        <p class="book-description">
+                            Guia completo de Apache Spark (RDD, DataFrames, Streaming, MLlib).
+                        </p>
+                        <div class="book-level">Intermediário</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>Kafka: The Definitive Guide</h4>
+                        <p class="book-author">Neha Narkhede et al.</p>
+                        <p class="book-description">
+                            Tudo sobre Apache Kafka (producers, consumers, streams, connect).
+                        </p>
+                        <div class="book-level">Intermediário</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>Fundamentals of Data Engineering</h4>
+                        <p class="book-author">Joe Reis & Matt Housley</p>
+                        <p class="book-description">
+                            Modern data engineering practices (2022, muito atualizado).
+                        </p>
+                        <div class="book-level">Todos os níveis</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4>Building a Scalable Data Warehouse with Data Vault 2.0</h4>
+                        <p class="book-author">Dan Linstedt</p>
+                        <p class="book-description">
+                            Metodologia Data Vault para Enterprise Data Warehouses.
+                        </p>
+                        <div class="book-level">Avançado</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Online Courses -->
+            <section class="resources-section">
+                <h2 class="section-title">🎓 Cursos Online</h2>
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-platform">Udemy</div>
+                        <h4>The Ultimate Hands-On Hadoop</h4>
+                        <p>Frank Kane - Hadoop ecosystem completo com hands-on projects</p>
+                        <div class="course-meta">
+                            <span><i class="fas fa-clock"></i> 15h</span>
+                            <span><i class="fas fa-star"></i> 4.5/5</span>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-platform">Coursera</div>
+                        <h4>Data Engineering on GCP</h4>
+                        <p>Google Cloud - Especialização oficial com 5 cursos</p>
+                        <div class="course-meta">
+                            <span><i class="fas fa-clock"></i> 3 meses</span>
+                            <span><i class="fas fa-certificate"></i> Certificate</span>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-platform">A Cloud Guru</div>
+                        <h4>AWS Certified Data Analytics</h4>
+                        <p>Preparação para certificação AWS Data Analytics Specialty</p>
+                        <div class="course-meta">
+                            <span><i class="fas fa-clock"></i> 20h</span>
+                            <span><i class="fas fa-trophy"></i> Exam prep</span>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-platform">Databricks Academy</div>
+                        <h4>Apache Spark Programming</h4>
+                        <p>Curso oficial gratuito de Spark da Databricks</p>
+                        <div class="course-meta">
+                            <span><i class="fas fa-dollar-sign"></i> GRATUITO</span>
+                            <span><i class="fas fa-graduation-cap"></i> Official</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Communities -->
+            <section class="resources-section">
+                <h2 class="section-title">👥 Comunidades</h2>
+                <div class="communities-grid">
+                    <div class="community-card">
+                        <i class="fab fa-slack"></i>
+                        <h4>Data Engineering Slack</h4>
+                        <p>Comunidade com 10K+ engenheiros de dados</p>
+                        <a href="https://datatalks.club/slack.html" target="_blank" class="btn btn-sm">
+                            Participar
+                        </a>
+                    </div>
+
+                    <div class="community-card">
+                        <i class="fab fa-reddit"></i>
+                        <h4>r/dataengineering</h4>
+                        <p>Subreddit com 100K+ membros discutindo data engineering</p>
+                        <a href="https://reddit.com/r/dataengineering" target="_blank" class="btn btn-sm">
+                            Visitar
+                        </a>
+                    </div>
+
+                    <div class="community-card">
+                        <i class="fab fa-discord"></i>
+                        <h4>Data Engineering Discord</h4>
+                        <p>Server Discord para networking e dúvidas</p>
+                        <a href="#" target="_blank" class="btn btn-sm">
+                            Entrar
+                        </a>
+                    </div>
+
+                    <div class="community-card">
+                        <i class="fab fa-meetup"></i>
+                        <h4>Meetups Locais</h4>
+                        <p>Encontros presenciais de Data Engineering</p>
+                        <a href="https://www.meetup.com/topics/data-engineering/" target="_blank" class="btn btn-sm">
+                            Buscar
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blogs & Newsletters -->
+            <section class="resources-section">
+                <h2 class="section-title">📰 Blogs e Newsletters</h2>
+                <div class="blogs-grid">
+                    <div class="blog-card">
+                        <h4>Seattle Data Guy</h4>
+                        <p>Ben Rogojan - Blog sobre data engineering e carreira</p>
+                        <a href="https://seattledataguy.substack.com/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Visitar
+                        </a>
+                    </div>
+
+                    <div class="blog-card">
+                        <h4>Data Engineering Weekly</h4>
+                        <p>Newsletter semanal curada com melhores artigos</p>
+                        <a href="https://www.dataengineeringweekly.com/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Inscrever
+                        </a>
+                    </div>
+
+                    <div class="blog-card">
+                        <h4>Netflix Tech Blog</h4>
+                        <p>Engineering blog da Netflix com data engineering em escala</p>
+                        <a href="https://netflixtechblog.com/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Ler
+                        </a>
+                    </div>
+
+                    <div class="blog-card">
+                        <h4>Uber Engineering</h4>
+                        <p>Blog de engenharia da Uber (real-time data infra)</p>
+                        <a href="https://www.uber.com/blog/engineering/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Explorar
+                        </a>
+                    </div>
+
+                    <div class="blog-card">
+                        <h4>Confluent Blog</h4>
+                        <p>Artigos sobre Kafka e event streaming</p>
+                        <a href="https://www.confluent.io/blog/" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Ler
+                        </a>
+                    </div>
+
+                    <div class="blog-card">
+                        <h4>Databricks Blog</h4>
+                        <p>Artigos sobre Spark, Delta Lake e Lakehouse</p>
+                        <a href="https://www.databricks.com/blog" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Explorar
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- YouTube Channels -->
+            <section class="resources-section">
+                <h2 class="section-title">📺 Canais do YouTube</h2>
+                <div class="youtube-grid">
+                    <div class="youtube-card">
+                        <i class="fab fa-youtube"></i>
+                        <h4>Seattle Data Guy</h4>
+                        <p>Tutoriais de data engineering e career advice</p>
+                        <a href="https://www.youtube.com/@SeattleDataGuy" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Assistir
+                        </a>
+                    </div>
+
+                    <div class="youtube-card">
+                        <i class="fab fa-youtube"></i>
+                        <h4>Data with Zach</h4>
+                        <p>Conceitos de data engineering explicados</p>
+                        <a href="https://www.youtube.com/@datawithzach" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Assistir
+                        </a>
+                    </div>
+
+                    <div class="youtube-card">
+                        <i class="fab fa-youtube"></i>
+                        <h4>Databricks</h4>
+                        <p>Tutoriais oficiais de Spark e Delta Lake</p>
+                        <a href="https://www.youtube.com/@Databricks" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Assistir
+                        </a>
+                    </div>
+
+                    <div class="youtube-card">
+                        <i class="fab fa-youtube"></i>
+                        <h4>AWS Events</h4>
+                        <p>Talks sobre AWS data services (re:Invent, etc)</p>
+                        <a href="https://www.youtube.com/@AWSEventsChannel" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Assistir
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practice Platforms -->
+            <section class="resources-section">
+                <h2 class="section-title">💻 Plataformas de Prática</h2>
+                <div class="practice-grid">
+                    <div class="practice-card">
+                        <h4>LeetCode</h4>
+                        <p>Algoritmos e estruturas de dados para entrevistas</p>
+                        <div class="practice-meta">
+                            <span class="badge">SQL</span>
+                            <span class="badge">Algorithms</span>
+                        </div>
+                        <a href="https://leetcode.com/" target="_blank" class="btn btn-outline">
+                            Praticar
+                        </a>
+                    </div>
+
+                    <div class="practice-card">
+                        <h4>HackerRank</h4>
+                        <p>SQL, Python e data engineering challenges</p>
+                        <div class="practice-meta">
+                            <span class="badge">SQL</span>
+                            <span class="badge">Python</span>
+                        </div>
+                        <a href="https://www.hackerrank.com/" target="_blank" class="btn btn-outline">
+                            Começar
+                        </a>
+                    </div>
+
+                    <div class="practice-card">
+                        <h4>StrataScratch</h4>
+                        <p>Questões reais de entrevistas de data engineering</p>
+                        <div class="practice-meta">
+                            <span class="badge">SQL</span>
+                            <span class="badge">Python</span>
+                            <span class="badge">Interview</span>
+                        </div>
+                        <a href="https://www.stratascratch.com/" target="_blank" class="btn btn-outline">
+                            Explorar
+                        </a>
+                    </div>
+
+                    <div class="practice-card">
+                        <h4>Databricks Community Edition</h4>
+                        <p>Ambiente gratuito para praticar Spark</p>
+                        <div class="practice-meta">
+                            <span class="badge">Spark</span>
+                            <span class="badge">FREE</span>
+                        </div>
+                        <a href="https://community.cloud.databricks.com/" target="_blank" class="btn btn-outline">
+                            Registrar
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="cta-section">
+                <h2>Pronto para começar?</h2>
+                <p>Explore nossos módulos teóricos, projetos práticos e certificações</p>
+                <div class="cta-buttons">
+                    <a href="index.html#modules" class="btn btn-primary">Ver Módulos</a>
+                    <a href="index.html#projects" class="btn btn-secondary">Ver Projetos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Engenharia de Dados Roadmap. Open Source Project.</p>
+            <div class="footer-links">
+                <a href="https://github.com/samueldk12/engenharia-dados" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .resources-page {
+            padding: 6rem 0 4rem;
+            background: var(--light);
+        }
+
+        .page-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .resources-section {
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .tools-category {
+            margin-bottom: 3rem;
+        }
+
+        .tools-category h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .tools-grid, .books-grid, .courses-grid, .communities-grid, 
+        .blogs-grid, .youtube-grid, .practice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tool-card, .book-card, .course-card, .community-card, 
+        .blog-card, .youtube-card, .practice-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tool-card:hover, .book-card:hover, .course-card:hover,
+        .community-card:hover, .blog-card:hover, .youtube-card:hover,
+        .practice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .tool-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .tool-link {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .tool-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tool-tags span, .practice-meta .badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .book-cover i {
+            font-size: 4rem;
+            color: white;
+        }
+
+        .book-author {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        .book-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .book-level {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .course-platform {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .course-meta, .practice-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .community-card, .youtube-card {
+            text-align: center;
+        }
+
+        .community-card i, .youtube-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .blog-card a, .youtube-card a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 1rem;
+            margin-top: 4rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .tools-grid, .books-grid, .courses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>
