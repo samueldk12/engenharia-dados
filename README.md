@@ -44,6 +44,30 @@ python study-cli.py benchmark run log-processing  # Benchmarks
 - ✅ Export/import de progresso
 - ✅ Interface colorida e intuitiva
 
+## 🌐 Interface Web Interativa
+
+**Prefere uma interface visual?** Temos uma aplicação web completa!
+
+```bash
+# Iniciar interface web
+python study-cli.py web start
+
+# Vai abrir automaticamente em http://localhost:8000
+```
+
+**Funcionalidades da Web App:**
+- 📊 Dashboard com estatísticas em tempo real
+- 📁 Gerenciar projetos visualmente (cards, filtros)
+- 🎓 Acompanhar certificações com progress bars
+- 📈 Gráficos de progresso interativos
+- 💾 Export/Import de dados
+- 🎨 Interface moderna e responsiva
+- ⚡ API REST completa (FastAPI + Vue.js)
+
+**Ver também:**
+- 🌐 **[GitHub Pages](https://samueldk12.github.io/engenharia-dados/)** - Site do projeto
+- 📖 **[Documentação da Web App](./docs/README.md)**
+
 ## 📚 Estrutura do Programa
 
 ### 🔰 Módulo 1: Fundamentos de Engenharia de Dados

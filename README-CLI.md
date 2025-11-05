@@ -12,6 +12,7 @@ CLI completa para gerenciar estudos, projetos práticos e certificações de Dat
   - [Progress](#progress)
   - [Tests](#tests)
   - [Benchmarks](#benchmarks)
+  - [Web](#web)
 - [Exemplos](#exemplos)
 - [Estrutura de Dados](#estrutura-de-dados)
 
@@ -505,6 +506,133 @@ Cria novo benchmark com template.
 ```bash
 python study-cli.py benchmark create log-processing parser_speed
 python study-cli.py benchmark create rate-limiter throughput
+```
+
+---
+
+### Web
+
+Gerenciar interface web local.
+
+#### `web start`
+
+Inicia o servidor web com interface visual completa.
+
+```bash
+# Iniciar servidor (abre navegador automaticamente)
+python study-cli.py web start
+
+# Especificar porta e host
+python study-cli.py web start --port 8080 --host 0.0.0.0
+
+# Não abrir navegador
+python study-cli.py web start --no-browser
+
+# Modo desenvolvimento (auto-reload)
+python study-cli.py web start --reload
+```
+
+**Funcionalidades da Web App:**
+```
+📊 Dashboard interativo
+  • Estatísticas em tempo real
+  • Projetos em progresso
+  • Certificações em estudo
+
+📁 Gerenciamento de Projetos
+  • Visualizar todos os projetos (cards)
+  • Filtrar por tipo e dificuldade
+  • Iniciar e completar projetos
+  • Ver histórico de sessões
+
+🎓 Gerenciamento de Certificações
+  • Listar certificações com progress bars
+  • Marcar tópicos como completos
+  • Tracking de progresso por cert
+  • Marcar como certificado
+
+📈 Visualização de Progresso
+  • Gráficos de barras
+  • Estatísticas detalhadas
+  • Export/Import de dados
+  • Reset com backup automático
+```
+
+#### `web open`
+
+Abre o navegador na interface web.
+
+```bash
+# Abrir navegador no servidor rodando
+python study-cli.py web open
+
+# Porta customizada
+python study-cli.py web open --port 8080
+```
+
+#### `web docs`
+
+Abre a documentação interativa da API (Swagger/ReDoc).
+
+```bash
+# Abrir docs da API
+python study-cli.py web docs
+
+# Vai abrir: http://localhost:8000/docs
+```
+
+#### `web status`
+
+Verifica se o servidor está rodando.
+
+```bash
+python study-cli.py web status
+```
+
+**Saída:**
+```
+✓ Servidor está rodando em http://127.0.0.1:8000
+
+Status: healthy
+Version: 1.0.0
+```
+
+#### `web info`
+
+Mostra informações detalhadas sobre a interface web.
+
+```bash
+python study-cli.py web info
+```
+
+**API Endpoints disponíveis:**
+```
+GET  /api/projects                    - Listar projetos
+GET  /api/projects/{id}               - Detalhes do projeto
+POST /api/projects/{id}/start         - Iniciar projeto
+POST /api/projects/{id}/complete      - Completar projeto
+
+GET  /api/certifications              - Listar certificações
+GET  /api/certifications/{id}         - Detalhes da certificação
+POST /api/certifications/{id}/start   - Iniciar estudo
+POST /api/certifications/{id}/topic/{topic} - Completar tópico
+POST /api/certifications/{id}/certified     - Marcar como certificado
+
+GET  /api/progress                    - Ver progresso completo
+DELETE /api/progress/reset            - Reset progresso
+
+GET  /health                          - Health check
+GET  /docs                            - Documentação Swagger
+GET  /redoc                           - Documentação ReDoc
+```
+
+**Atalhos de Teclado (na web):**
+```
+Ctrl/Cmd + R      - Atualizar dados
+Ctrl/Cmd + 1      - Dashboard
+Ctrl/Cmd + 2      - Projetos
+Ctrl/Cmd + 3      - Certificações
+Ctrl/Cmd + 4      - Progresso
 ```
 
 ---

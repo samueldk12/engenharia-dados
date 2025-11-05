@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Engineering Study Manager</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
+            <div class="sidebar-header">
+                <i class="fas fa-database"></i>
+                <span v-show="!sidebarCollapsed">Study Manager</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" @click="currentView = 'dashboard'" :class="{ active: currentView === 'dashboard' }">
+                    <i class="fas fa-home"></i>
+                    <span v-show="!sidebarCollapsed">Dashboard</span>
+                </a>
+                <a href="#projects" @click="currentView = 'projects'" :class="{ active: currentView === 'projects' }">
+                    <i class="fas fa-folder"></i>
+                    <span v-show="!sidebarCollapsed">Projetos</span>
+                </a>
+                <a href="#certifications" @click="currentView = 'certifications'" :class="{ active: currentView === 'certifications' }">
+                    <i class="fas fa-certificate"></i>
+                    <span v-show="!sidebarCollapsed">Certificações</span>
+                </a>
+                <a href="#progress" @click="currentView = 'progress'" :class="{ active: currentView === 'progress' }">
+                    <i class="fas fa-chart-line"></i>
+                    <span v-show="!sidebarCollapsed">Progresso</span>
+                </a>
+            </nav>
+            <button class="sidebar-toggle" @click="sidebarCollapsed = !sidebarCollapsed">
+                <i :class="sidebarCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1>{{ viewTitle }}</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" @click="refreshData">
+                        <i class="fas fa-sync"></i> Atualizar
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div v-if="currentView === 'dashboard'" class="view">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon projects">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">[[ stats.projects.completed ]]/[[ stats.projects.total ]]</div>
+                            <div class="stat-label">Projetos Completos</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon certs">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">[[ stats.certifications.certified ]]/[[ stats.certifications.total ]]</div>
+                            <div class="stat-label">Certificações Obtidas</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon sessions">
+                            <i class="fas fa-book-reader"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">[[ stats.study_sessions.total ]]</div>
+                            <div class="stat-label">Sessões de Estudo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <h2>Projetos em Progresso</h2>
+                        <div v-if="inProgressProjects.length === 0" class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <p>Nenhum projeto em progresso</p>
+                        </div>
+                        <div v-else class="project-list">
+                            <div v-for="project in inProgressProjects" :key="project.id" class="project-item" @click="viewProjectDetails(project.id)">
+                                <h3>[[ project.name ]]</h3>
+                                <div class="project-meta">
+                                    <span class="badge">[[ project.type ]]</span>
+                                    <span>[[ project.difficulty_stars ]]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h2>Certificações em Estudo</h2>
+                        <div v-if="inProgressCerts.length === 0" class="empty-state">
+                            <i class="fas fa-certificate"></i>
+                            <p>Nenhuma certificação em estudo</p>
+                        </div>
+                        <div v-else class="cert-list">
+                            <div v-for="cert in inProgressCerts" :key="cert.id" class="cert-item">
+                                <h3>[[ cert.name ]]</h3>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" :style="{ width: cert.progress + '%' }"></div>
+                                </div>
+                                <div class="progress-label">[[ cert.progress.toFixed(0) ]]% completo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects View -->
+            <div v-if="currentView === 'projects'" class="view">
+                <div class="view-controls">
+                    <div class="filters">
+                        <select v-model="projectFilters.type" @change="loadProjects">
+                            <option value="all">Todos os tipos</option>
+                            <option value="practical">Práticos</option>
+                            <option value="interview">Entrevista</option>
+                        </select>
+                        <select v-model="projectFilters.difficulty" @change="loadProjects">
+                            <option value="">Todas dificuldades</option>
+                            <option value="2">⭐⭐ Fácil</option>
+                            <option value="3">⭐⭐⭐ Médio</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Difícil</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="projects-grid">
+                    <div v-for="(project, id) in projects" :key="id" class="project-card" :class="project.status">
+                        <div class="card-header">
+                            <span class="badge" :class="project.type">[[ project.type ]]</span>
+                            <span>[[ project.difficulty_stars ]]</span>
+                        </div>
+                        <h3>[[ project.name ]]</h3>
+                        <div class="topics">
+                            <span v-for="topic in project.topics" :key="topic" class="topic-tag">[[ topic ]]</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="time"><i class="fas fa-clock"></i> [[ project.time ]]</span>
+                            <div class="actions">
+                                <button v-if="project.status === 'not_started'" @click="startProject(id)" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-play"></i> Iniciar
+                                </button>
+                                <button v-if="project.status === 'in_progress'" @click="completeProject(id)" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Concluir
+                                </button>
+                                <span v-if="project.status === 'completed'" class="status-badge completed">
+                                    <i class="fas fa-check-circle"></i> Completo
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications View -->
+            <div v-if="currentView === 'certifications'" class="view">
+                <div class="view-controls">
+                    <div class="filters">
+                        <select v-model="certFilters.provider" @change="loadCertifications">
+                            <option value="all">Todos providers</option>
+                            <option value="AWS">AWS</option>
+                            <option value="Databricks">Databricks</option>
+                            <option value="GCP">GCP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="certs-grid">
+                    <div v-for="(cert, id) in certifications" :key="id" class="cert-card" :class="cert.status">
+                        <div class="cert-provider" :class="cert.provider.toLowerCase()">[[ cert.provider ]]</div>
+                        <h3>[[ cert.name ]]</h3>
+                        <div class="cert-info">
+                            <span><i class="fas fa-dollar-sign"></i> $[[ cert.cost ]]</span>
+                            <span><i class="fas fa-clock"></i> [[ cert.duration ]]</span>
+                            <span><i class="fas fa-chart-line"></i> [[ cert.roi ]]</span>
+                        </div>
+
+                        <div class="progress-section">
+                            <div class="progress-bar">
+                                <div class="progress-fill" :style="{ width: cert.progress + '%' }"></div>
+                            </div>
+                            <div class="progress-label">[[ cert.progress.toFixed(0) ]]% completo</div>
+                        </div>
+
+                        <div class="topics-section">
+                            <h4>Tópicos:</h4>
+                            <ul class="topic-list">
+                                <li v-for="topic in cert.topics" :key="topic" :class="{ completed: cert.completed_topics.includes(topic) }">
+                                    <i :class="cert.completed_topics.includes(topic) ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                                    [[ topic ]]
+                                    <button v-if="!cert.completed_topics.includes(topic)" @click="completeTopic(id, topic)" class="btn-icon">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-actions">
+                            <button v-if="cert.status === 'not_started' || cert.status === 'in_progress'" @click="startCertification(id)" class="btn btn-primary btn-sm">
+                                <i class="fas fa-play"></i> Estudar
+                            </button>
+                            <button v-if="cert.status === 'ready_for_exam'" @click="markCertified(id)" class="btn btn-success btn-sm">
+                                <i class="fas fa-trophy"></i> Marcar como Certificado
+                            </button>
+                            <span v-if="cert.status === 'certified'" class="status-badge certified">
+                                <i class="fas fa-trophy"></i> Certificado
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress View -->
+            <div v-if="currentView === 'progress'" class="view">
+                <div class="progress-summary">
+                    <div class="summary-section">
+                        <h2>Projetos</h2>
+                        <div class="progress-chart">
+                            <div class="chart-bar">
+                                <div class="bar-segment completed" :style="{ width: (stats.projects.completed / stats.projects.total * 100) + '%' }"></div>
+                                <div class="bar-segment in-progress" :style="{ width: (stats.projects.in_progress / stats.projects.total * 100) + '%' }"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <span><i class="fas fa-circle completed"></i> Completos: [[ stats.projects.completed ]]</span>
+                                <span><i class="fas fa-circle in-progress"></i> Em Progresso: [[ stats.projects.in_progress ]]</span>
+                                <span><i class="fas fa-circle not-started"></i> Não Iniciados: [[ stats.projects.not_started ]]</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-section">
+                        <h2>Certificações</h2>
+                        <div class="progress-chart">
+                            <div class="chart-bar">
+                                <div class="bar-segment certified" :style="{ width: (stats.certifications.certified / stats.certifications.total * 100) + '%' }"></div>
+                                <div class="bar-segment ready" :style="{ width: (stats.certifications.ready_for_exam / stats.certifications.total * 100) + '%' }"></div>
+                                <div class="bar-segment in-progress" :style="{ width: (stats.certifications.in_progress / stats.certifications.total * 100) + '%' }"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <span><i class="fas fa-circle certified"></i> Certificado: [[ stats.certifications.certified ]]</span>
+                                <span><i class="fas fa-circle ready"></i> Pronto: [[ stats.certifications.ready_for_exam ]]</span>
+                                <span><i class="fas fa-circle in-progress"></i> Estudando: [[ stats.certifications.in_progress ]]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-actions">
+                    <button @click="exportProgress" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Exportar Progresso
+                    </button>
+                    <button @click="confirmReset" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Reset Progresso
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container">
+            <div v-for="toast in toasts" :key="toast.id" class="toast" :class="toast.type">
+                <i :class="toast.icon"></i>
+                <span>[[ toast.message ]]</span>
+                <button @click="removeToast(toast.id)" class="toast-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div v-if="loading" class="loading-overlay">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

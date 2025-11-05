@@ -19,6 +19,7 @@ from cli.certifications import certs_group
 from cli.progress import progress_group
 from cli.tests import tests_group
 from cli.benchmarks import benchmarks_group
+from cli.web import web_group
 
 console = Console()
 
@@ -49,6 +50,7 @@ cli.add_command(certs_group, name='certs')
 cli.add_command(progress_group, name='progress')
 cli.add_command(tests_group, name='test')
 cli.add_command(benchmarks_group, name='benchmark')
+cli.add_command(web_group, name='web')
 
 
 if __name__ == '__main__':
