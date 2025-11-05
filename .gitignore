@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Study CLI
+# Uncomment the next line if you want to keep progress local (not versioned)
+# .data/
+# Keep backups local
+.data/*_backup_*.json
