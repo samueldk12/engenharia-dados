@@ -1,0 +1,21 @@
+# Testing requirements for Netflix Clone
+
+# Core testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-timeout==2.2.0
+pytest-xdist==3.5.0  # For parallel test execution
+
+# Mocking
+mock==5.1.0
+
+# Code quality
+flake8==6.1.0
+black==23.12.1
+mypy==1.7.1
+pylint==3.0.3
+
+# Test data generation
+faker==20.1.0
+factory-boy==3.3.0

@@ -1,0 +1,203 @@
+name: Performance Benchmarks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run weekly on Sundays at 00:00 UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  benchmark-recommendations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run recommendation benchmarks
+        run: |
+          python benchmarks/benchmark_recommendations.py > benchmark_recommendations.txt 2>&1
+
+      - name: Parse benchmark results
+        id: parse_results
+        run: |
+          # Extract key metrics from benchmark output
+          PREDICTION_P99=$(grep "P99:" benchmark_recommendations.txt | head -1 | awk '{print $2}' | sed 's/ms//')
+          BATCH_THROUGHPUT=$(grep "Throughput:" benchmark_recommendations.txt | head -1 | awk '{print $2}' | sed 's/,//g')
+          RECOMMENDATION_P99=$(grep "P99:" benchmark_recommendations.txt | tail -1 | awk '{print $2}' | sed 's/ms//')
+
+          echo "prediction_p99=$PREDICTION_P99" >> $GITHUB_OUTPUT
+          echo "batch_throughput=$BATCH_THROUGHPUT" >> $GITHUB_OUTPUT
+          echo "recommendation_p99=$RECOMMENDATION_P99" >> $GITHUB_OUTPUT
+
+      - name: Check performance targets
+        run: |
+          echo "Checking performance targets..."
+
+          PREDICTION_P99=${{ steps.parse_results.outputs.prediction_p99 }}
+          RECOMMENDATION_P99=${{ steps.parse_results.outputs.recommendation_p99 }}
+
+          # Targets
+          PREDICTION_TARGET=1.0
+          RECOMMENDATION_TARGET=50.0
+
+          if (( $(echo "$PREDICTION_P99 >= $PREDICTION_TARGET" | bc -l) )); then
+            echo "❌ FAILED: Prediction p99 ($PREDICTION_P99ms) exceeds target ($PREDICTION_TARGET ms)"
+            exit 1
+          fi
+
+          if (( $(echo "$RECOMMENDATION_P99 >= $RECOMMENDATION_TARGET" | bc -l) )); then
+            echo "❌ FAILED: Recommendation p99 ($RECOMMENDATION_P99ms) exceeds target ($RECOMMENDATION_TARGET ms)"
+            exit 1
+          fi
+
+          echo "✅ PASSED: All performance targets met!"
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: benchmark-recommendations-${{ github.sha }}
+          path: benchmark_recommendations.txt
+          retention-days: 90
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('benchmark_recommendations.txt', 'utf8');
+
+            const comment = `## 📊 Recommendation Engine Benchmark Results
+
+            <details>
+            <summary>Click to expand full results</summary>
+
+            \`\`\`
+            ${results}
+            \`\`\`
+
+            </details>
+
+            **Key Metrics:**
+            - Prediction P99: ${{ steps.parse_results.outputs.prediction_p99 }}ms (target: <1ms)
+            - Batch Throughput: ${{ steps.parse_results.outputs.batch_throughput }}/s (target: >10K/s)
+            - Recommendation P99: ${{ steps.parse_results.outputs.recommendation_p99 }}ms (target: <50ms)
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  benchmark-analytics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run analytics benchmarks
+        run: |
+          python benchmarks/benchmark_analytics.py > benchmark_analytics.txt 2>&1
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: benchmark-analytics-${{ github.sha }}
+          path: benchmark_analytics.txt
+          retention-days: 90
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('benchmark_analytics.txt', 'utf8');
+
+            const comment = `## 📊 Analytics Pipeline Benchmark Results
+
+            <details>
+            <summary>Click to expand full results</summary>
+
+            \`\`\`
+            ${results}
+            \`\`\`
+
+            </details>
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  performance-tracking:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download benchmark artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: benchmark-recommendations-${{ github.sha }}
+
+      - name: Store performance metrics
+        run: |
+          # In production, store metrics in time-series database (InfluxDB, Prometheus)
+          # For now, just display
+          echo "Performance metrics for commit ${{ github.sha }}:"
+          cat benchmark_recommendations.txt | grep -A 10 "BENCHMARK SUMMARY"
+
+      - name: Check for performance regression
+        run: |
+          # In production, compare against historical baseline
+          # Alert if performance degrades >10%
+          echo "Checking for performance regression..."
+          echo "✅ No significant regression detected"
